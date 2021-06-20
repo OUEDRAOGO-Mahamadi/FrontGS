@@ -186,10 +186,12 @@ toggleCat=()=>{
                     </DropdownToggle>
                     <DropdownMenu>
                       {/* <DropdownItem header>Header</DropdownItem> */}
-                      {
+                        {
                         this.state.categorie.map((val,idx)=>(
+                          <>
                           <DropdownItem onClick={this.handleTieCategorie.bind(this,val.nom)}>{val.nom}</DropdownItem>
-                          // <DropdownItem divider></DropdownItem>
+                           <DropdownItem divider></DropdownItem>
+                          </>
                         ))
                         
                         }

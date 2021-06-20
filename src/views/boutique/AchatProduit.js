@@ -51,6 +51,7 @@ class AchatProduit extends Component {
         monnaie:0,
         produit_ids:[],
         coleur:"black",
+        nouveau:true,
       }
       this.handleScan = this.handleScan.bind(this)
       this.handleDelete.bind(this)
@@ -90,7 +91,7 @@ class AchatProduit extends Component {
   else{
       $("#monnaie").val("0.00 FCFA")
       $("#total").val("0.00 FCFA")
-      $("#encaisse").val("0.00 FCFA")
+      $("#encaisse").val("")
       this.errorMontantRetirer()
       document.getElementById("valide").disabled = true;
     }
@@ -98,8 +99,10 @@ class AchatProduit extends Component {
 
   handleMonnaie=(e)=>{
     var total=0
+    if(e.target.value){
+      total=parseInt(e.target.value)-parseInt(this.state.total);
+    }
     
-    total=parseInt(e.target.value)-parseInt(this.state.total);
     if(total<0){
       this.errorMontantApplique()
       document.getElementById("valide").disabled = true;
@@ -110,6 +113,7 @@ class AchatProduit extends Component {
       this.setState({couleur:"black"})
     }
     $("#monnaie").val(total+" FCFA")
+    this.setState({monnaie:total})
   }
 
   handleScan(data){
@@ -148,7 +152,7 @@ class AchatProduit extends Component {
     if(this.state.panier.filter(x=>x.id!=id).length==0){
       $("#monnaie").val("0.00 FCFA")
       $("#total").val("0.00 FCFA")
-      $("#encaisse").val("0.00 FCFA")
+      $("#encaisse").val("")
       $("#liste").css("display","none")
       this.errorMontantRetirer()
       document.getElementById("valide").disabled = true;
@@ -167,7 +171,7 @@ class AchatProduit extends Component {
       headers: { 'Content-Type': 'application/json','Accept': 'application/json' },
       body: JSON.stringify(data)
   };
-        fetch('http://localhost:3000/prodduits/'+id, requestOptions)
+        fetch('http://localhost:3000/produits/'+id, requestOptions)
         .then(response => response.json()
       )
       .then(data =>{
@@ -180,6 +184,8 @@ class AchatProduit extends Component {
       // "nom": $("#intitule").val(),
       // "pv": $("#pv").val(),
       "montant":this.state.total,
+      "montantencaisse":$("#encaisse").val(),
+      "monnaie":this.state.monnaie,
       "venteproduits_attributes": this.state.produit_ids,
      
   
@@ -197,20 +203,28 @@ class AchatProduit extends Component {
         this.state.panier.map((val)=>{
           this.handleUpdateProduct(val.id,{"qte":parseInt(val.stock)-parseInt(val.quantite)})
         })
-        
+        this.setState({nouveau:false})
 
       } )
   }
 
  errorMontantApplique=()=>{
-  $("#monnaie").addClass("is-invalid")
-  $("#valideAchat").css("display","block")
+      $("#monnaie").addClass("is-invalid")
+      $("#valideAchat").css("display","block")
  }
  errorMontantRetirer=()=>{
-  $("#monnaie").removeClass("is-invalid")
-  $("#valideAchat").css("display","none")
+      $("#monnaie").removeClass("is-invalid")
+      $("#valideAchat").css("display","none")
  }
-  render() {
+
+ handleAddNew=()=>{
+      this.setState({nouveau:true,panier:[]})
+      $("#liste").css("display","none")
+      $("#valideAchat").css("display","none")
+}
+
+
+render() {
 
   return (
     <>
@@ -246,7 +260,10 @@ class AchatProduit extends Component {
 
 
 
-   
+      {
+      (this.state.nouveau) ? 
+      (
+      <>
       <Row className="mt-2">
         
           <Col className="order-xl-1" md="12">
@@ -404,7 +421,7 @@ class AchatProduit extends Component {
           <div style={{textAlign:"right"}} >
             <Button
                 color="primary" 
-                //onClick={this.handleRetour}
+                onClick={this.handleAchat}
                 id="valide"
                 size="md"
                         >
@@ -414,14 +431,71 @@ class AchatProduit extends Component {
 
           </Col>
         </Row>
-        <div>
+        
+      </>):(
+         <div className="mt-8">
+           <h3>Vente effectuée avec succèss</h3>
+          <div id="echecSauv" className="alert alert-warning  mt-2" role="alert">
+          {
+          this.state.panier.map((element,idx) =>(
+             <>
+              <div>
+                <span>Nom: </span> {element.intitule}
+              </div>
+              
+              <div>
+                <span>Quantité: </span>{element.quantite}
+              </div>
+              <div>
+                <span>Prix: </span>{element.pv}
+              </div>
+              <hr/>
+              </>
+              
+              ))}
+              <div>
+                <span>Total: </span>{this.state.total}
+              </div>
+              <div>
+                <span>Encaisse: </span>{$("#encaisse").val()}
+              </div>
+              <div>
+                <span>Monnaie: </span>{this.state.monnaie}
+              </div>
+           </div>
+              <Row className="mt-2">
+              <Col md="8">
+
+              </Col>
+              <Col md="2">
+                
+              </Col>
+              <Col md="2">
+              <div style={{textAlign:"right"}} >
+                <Button
+                    color="primary" 
+                    onClick={this.handleAddNew}
+                    size="md"
+                            >
+                            OK
+                </Button>
+            </div> 
+
+              </Col>
+            </Row>
+       
+         </div>
+        
+      )
+    }
+      </Container>
+      <div>
         <BarcodeReader
           onError={this.handleError}
           onScan={this.handleScan}
           />
        
       </div>
-      </Container>
     </>
   );
 }

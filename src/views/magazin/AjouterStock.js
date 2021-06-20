@@ -50,6 +50,9 @@ import Header from "components/Headers/Header.js";
       result: 'No result',
       produit:[],
       produit_id:0,
+      nouveau:true,
+      detail:false,
+      magazin:{},
       code:null
     }
    
@@ -92,7 +95,8 @@ import Header from "components/Headers/Header.js";
        .then(response => response.json()
       )
       .then(data =>{console.log("enregitre avec succes vrai:",data)
-    
+      this.setState({magazin:data})
+        this.setState({nouveau:false})
      
      } )
     }
@@ -102,7 +106,7 @@ import Header from "components/Headers/Header.js";
     var data=[]
     console.log("adate =====>",e)
     try{
-      this.setState({produit_id:e[0].value})
+      this.setState({produit_id:e.value})
     }catch(ee){
 
     }
@@ -112,6 +116,11 @@ import Header from "components/Headers/Header.js";
     //   this.setState({thematiques_attributes:[...data,{"thematique_id":element.value}]})
     // })
   }
+
+  handleAddNew=()=>{
+    this.setState({nouveau:true})
+  }
+
 render() {
   const animatedComponents = makeAnimated();
   return (
@@ -147,7 +156,10 @@ render() {
       </Row>
 
 
-      
+      {
+      (this.state.nouveau) ? 
+      (
+      <>
    
       <Row className="mt-2">
         
@@ -187,10 +199,9 @@ render() {
                             produit
                           </label>
                           <ReactSelect
-                            closeMenuOnSelect={false}
+                            closeMenuOnSelect={true}
                             components={animatedComponents}
-                            
-                             isMulti
+
                             onChange={this.handleChangeProduit}
                             options={this.state.produit}
 
@@ -275,7 +286,47 @@ render() {
          </div> 
 
           </Col>
-        </Row>
+        </Row>) </>):(
+         <div className="mt-8">
+           <h3>Produit ajouté dans le magasin</h3>
+          <div id="echecSauv" className="alert alert-warning  mt-2" role="alert">
+              <div>
+                <span>Nom: </span> {this.state.magazin.produit.nom}
+              </div>
+              <div>
+                <span>Categorie: </span> {this.state.magazin.produit.famille.nom}
+              </div>
+              <div>
+                <span>Quantité: </span>{this.state.magazin.stock}
+              </div>
+              <div>
+                <span>Prix: </span>{this.state.magazin.pa}
+              </div>
+           </div>
+              <Row className="mt-2">
+              <Col md="8">
+
+              </Col>
+              <Col md="2">
+                
+              </Col>
+              <Col md="2">
+              <div style={{textAlign:"right"}} >
+                <Button
+                    color="primary" 
+                    onClick={this.handleAddNew}
+                    size="md"
+                            >
+                            OK
+                </Button>
+            </div> 
+
+              </Col>
+            </Row>
+         </div>
+        
+      )
+    }
         
       </Container>
     </>

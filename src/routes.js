@@ -30,6 +30,7 @@ import AjouterProduit from "views/boutique/AjouterProduit.js";
 import AchatProduit from "views/boutique/AchatProduit.js";
 import Vente from "views/boutique/Vente.js";
 import ApprovisionerStock from "views/magazin/ApprovisionnerStock.js";
+import ApprovisionerBoutique from "views/boutique/ApprovisionnerStock.js";
 var routes = [
   {
     path: "/achat-produit",
@@ -60,8 +61,15 @@ var routes = [
     layout: "/admin",
   },
   {
+    path: "/approvision-boutique",
+    name: "Ravitailler Boutique",
+    icon: "ni ni-shop text-blue",
+    component: ApprovisionerBoutique,
+    layout: "/admin",
+  },
+  {
     path: "/approvision",
-    name: "Approvisionner Depot",
+    name: "Approvsionnement",
     icon: "ni ni-shop text-blue",
     component: ApprovisionerStock,
     layout: "/admin",

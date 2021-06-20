@@ -71,7 +71,7 @@ class Produit extends Component {
     .then((response) => response.json())
     .then((data) => {
        console.log("okkk====>",data)
-       this.setState({produits:data})
+       this.setState({produits:data.reverse()})
     
      }
      
@@ -189,8 +189,10 @@ class Produit extends Component {
                       <DropdownItem>Categorie 2</DropdownItem> */}
                          {
                         this.state.categorie.map((val,idx)=>(
+                          <>
                           <DropdownItem onClick={this.handleTieCategorie.bind(this,val.nom)}>{val.nom}</DropdownItem>
-                          // <DropdownItem divider></DropdownItem>
+                           <DropdownItem divider></DropdownItem>
+                          </>
                         ))
                         
                         }

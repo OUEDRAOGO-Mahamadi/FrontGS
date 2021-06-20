@@ -50,22 +50,28 @@ import Header from "components/Headers/Header.js";
       result: 'No result',
       produit:[],
       produit_id:0,
-      code:null
+      code:null,
+      stock:{},
+      initial:0,
+      quantiteFinale:0,
+      nouveau:true
     }
    
     this.handleChangeProduit.bind(this);
+    this.handleErrorValue.bind(this)
   }
 
 
   componentDidMount() {
-    
+    document.getElementById("valide").disabled = true;
 
-    fetch("http://localhost:3000/produits")
+    fetch("http://localhost:3000/magasins")
     .then((response) => response.json())
     .then((data) => {
        console.log("okkk====>",data)
-      data.map((el)=>{
-        this.setState({produit:[...this.state.produit,{value:el.id,label:el.nom}]})
+       var panier=data.filter(x => x.stock<=5)
+      panier.map((el)=>{
+        this.setState({produit:[...this.state.produit,{value:el.id,label:el.produit.nom,restantBoutique:el.produit.qte,restantStock:el.stock}]})
       })
     
      }
@@ -73,26 +79,26 @@ import Header from "components/Headers/Header.js";
     );
     }
   handleSave=()=>{
-  
+    var total=this.state.initial+parseInt($("#quantite").val())
       var data= {
-        "pa": $("#pv").val(),
-        "stock":$("#quantite").val(),
-        "produit_id":this.state.produit_id,
-    
+        stock:total
+      
       }
+      console.log("sendin data:",data.stock)
       const requestOptions = {
-        method: 'POST',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json','Accept': 'application/json' },
         body: JSON.stringify(data)
-    };
+      };
       
     
     
-    fetch('http://localhost:3000/magasins', requestOptions)
+    fetch('http://localhost:3000/magasins/'+this.state.produit_id, requestOptions)
        .then(response => response.json()
       )
       .then(data =>{console.log("enregitre avec succes vrai:",data)
-    
+      this.setState({stock:data})
+      this.setState({nouveau:false})
      
      } )
     }
@@ -100,18 +106,54 @@ import Header from "components/Headers/Header.js";
 
   handleChangeProduit = (e) => {
     var data=[]
+    var total=0
     console.log("adate =====>",e)
     try{
-      this.setState({produit_id:e[0].value})
+      this.setState({produit_id:e.value,qte_boutique:e.restantBoutique,qte_stock:e.restantStock})
+      $("#quantite-boutique").val(e.restantBoutique)
+      $("#quantite-depot").val(e.restantStock)
+      
+      this.setState({initial:parseInt(e.restantStock)})
+      document.getElementById("valide").disabled = false;
     }catch(ee){
 
     }
-   
-
-    // e.map((element,idx) =>{
-    //   this.setState({thematiques_attributes:[...data,{"thematique_id":element.value}]})
-    // })
+  
   }
+
+  handleAddNew=()=>{
+    this.setState({nouveau:true,produit:[]})
+    fetch("http://localhost:3000/magasins")
+    .then((response) => response.json())
+    .then((data) => {
+       console.log("okkk====>",data)
+       var panier=data.filter(x => x.stock<=5)
+      panier.map((el)=>{
+        this.setState({produit:[...this.state.produit,{value:el.id,label:el.produit.nom,restantBoutique:el.produit.qte,restantStock:el.stock}]})
+      })
+    
+     }
+     
+    );
+   
+    }
+
+    handleErrorValue=(e)=>{
+      console.log("value",e.target.value)
+      $("#quantite-depot").val(this.state.qte_stock)
+      $("#quantite-boutique").val(this.state.qte_boutique)
+    
+      if(e.target.value){
+            
+            $("#quantite-depot").val(parseInt($("#quantite-depot").val())+parseInt(e.target.value))
+      }else{
+            $("#quantite-depot").val(this.state.qte_stock)
+            
+      }
+          
+     
+     }
+
 render() {
   const animatedComponents = makeAnimated();
   return (
@@ -147,7 +189,10 @@ render() {
       </Row>
 
 
-      
+    {
+      (this.state.nouveau) ? 
+      (
+      <>
    
       <Row className="mt-2">
         
@@ -156,7 +201,7 @@ render() {
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
                   <Col xs="8">
-                    <h3 className="mb-0">Aprovisionner Dépot</h3>
+                    <h3 className="mb-0">Dépot/Aprovisionner</h3>
                   </Col>
                   <Col className="text-right" xs="4">
                     <Button
@@ -187,10 +232,9 @@ render() {
                             produit
                           </label>
                           <ReactSelect
-                            closeMenuOnSelect={false}
+                            closeMenuOnSelect={true}
                             components={animatedComponents}
-                            
-                             isMulti
+
                             onChange={this.handleChangeProduit}
                             options={this.state.produit}
 
@@ -245,6 +289,7 @@ render() {
                           <Input
                             className="form-control-alternative"
                             id="quantite"
+                            onChange={this.handleErrorValue}
                             placeholder="donner la quantité a ajouter"
                             type="number"
                           />
@@ -285,6 +330,7 @@ render() {
           <div style={{textAlign:"right"}} >
             <Button
                 color="primary" 
+                id="valide"
                 onClick={this.handleSave}
                 size="md"
                         >
@@ -293,7 +339,41 @@ render() {
          </div> 
 
           </Col>
-        </Row>
+        </Row></>):(
+         <div className="mt-8">
+           <h3>Produit ravitaillé avec success</h3>
+          <div id="echecSauv" className="alert alert-warning  mt-2" role="alert">
+              <div>
+                <span>Nombre ajouté: </span> {$("#quantite").val()}
+              </div>
+              <div>
+                <span>Quantité Totale: </span>{this.state.stock.stock}
+              </div>
+           </div>
+              <Row className="mt-2">
+              <Col md="8">
+
+              </Col>
+              <Col md="2">
+                
+              </Col>
+              <Col md="2">
+              <div style={{textAlign:"right"}} >
+                <Button
+                    color="primary" 
+                    onClick={this.handleAddNew}
+                    size="md"
+                            >
+                            OK
+                </Button>
+            </div> 
+
+              </Col>
+            </Row>
+         </div>
+        
+      )
+    }
         
       </Container>
     </>

@@ -149,36 +149,7 @@ class Categorie extends Component {
                     ))
                     
                   }   
-                  <tr>
-                  <td >Savon</td>
-                    <td>Vaiselle</td>
-
-                    <td>
-                    <i style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
-                    </td>
-                  </tr>
-                  <tr>
-                  <td >Savon</td>
-                    <td>Vaiselle</td>
-
-                    <td>
-                    <i style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
-                    </td>
-                  </tr>
-                  <tr>
-                  <td >Savon</td>
-                    <td>Vaiselle</td>
-                    <td>
-                    <i style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
-                    </td>
-                  </tr>
-                  <tr>
-                  <td >Savon</td>
-                    <td>Vaiselle</td>
-                    <td>
-                    <i style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
-                    </td>
-                  </tr>
+                
                 </tbody>
               </Table>
             </Card>

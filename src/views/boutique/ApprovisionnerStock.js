@@ -39,8 +39,9 @@ import {
 import ReactSelect from 'react-select'
 import makeAnimated from 'react-select/animated';
 import Header from "components/Headers/Header.js";
+import { EndOfLineState } from "typescript";
 
- class AjouterProduit extends Component {
+ class ApprovisionerBoutique extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -48,47 +49,35 @@ import Header from "components/Headers/Header.js";
       isOpen:false,
       isOpenCat:false,
       result: 'No result',
-      categorie:[],
-      famille:0,
-      code:null,
       produit:[],
-      resultCategorie:"",
+      produit_id:0,
+      stock_id:0,
+      code:null,
+      stock:{},
+      initialStock:0,
+      initialBoutique:0,
+      quantiteFinale:0,
       nouveau:true,
-      detail:false,
-      color:"white"
+      color:"black",
+      ajoute:0,
+      boutique:{}
     }
-    this.handleScan = this.handleScan.bind(this)
-    this.handleChangeCategorie.bind(this);
+   
+    this.handleChangeProduit.bind(this);
+    this.handleErrorValue.bind(this)
   }
-  handleScan(data){
-    this.setState({
-      code: data
-    })
-    if(data){
-      $("#code").val(Math.floor(Math.random() * 1000000000000000))
-      this.setState({color:"green"})
-      document.getElementById("valide").disabled = false;
-    }else{
-      $("#code").val("00000000000000000000000000000")
-      this.setState({color:"red"})
-    }
-    
-    
-  }
-  handleError(err){
-    console.error(err)
-    $("#code").val(err)
-  }
-  componentDidMount() {
 
+
+  componentDidMount() {
     document.getElementById("valide").disabled = true;
 
-    fetch("http://localhost:3000/familles")
+    fetch("http://localhost:3000/magasins")
     .then((response) => response.json())
     .then((data) => {
        console.log("okkk====>",data)
-      data.map((el)=>{
-        this.setState({categorie:[...this.state.categorie,{value:el.id,label:el.nom}]})
+       var panier=data.filter(x => x.produit.qte<=5)
+      panier.map((el)=>{
+        this.setState({produit:[...this.state.produit,{value:el.produit.id,id:el.id,label:el.produit.nom,restantBoutique:el.produit.qte,restantStock:el.stock}]})
       })
     
      }
@@ -96,55 +85,120 @@ import Header from "components/Headers/Header.js";
     );
     }
   handleSave=()=>{
-  
-    
-      var data= {
-        "nom": $("#intitule").val(),
-        "pv": $("#pv").val(),
-        "qte":$("#quantite").val(),
-        "famille_id":this.state.famille,
-        "codebarre": this.state.code,
-       
-    
-      }
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json','Accept': 'application/json' },
-        body: JSON.stringify(data)
-    };
+    var totalBoutique=0
+    var totalStock=0
+    totalBoutique=this.state.initialBoutique+parseInt($("#quantite").val())
+    totalStock=this.state.initialStock-parseInt($("#quantite").val())
+
+
+      var dataStock= {
+        stock:totalStock
       
+      }
+      var dataBoutique= {
+        qte:totalBoutique
+      
+      }
+      
+      const jsonBoutique = {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json','Accept': 'application/json' },
+        body: JSON.stringify(dataBoutique)
+      };
+
+      const jsonStock = {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json','Accept': 'application/json' },
+        body: JSON.stringify(dataStock)
+      };
+      
+    fetch('http://localhost:3000/produits/'+this.state.produit_id, jsonBoutique)
+     .then(response => response.json()
+    )
+    .then(data =>{console.log("enregitre avec succes vrai:",data)
+        this.setState({boutique:data})
+        this.setState({nouveau:false})
+   
+   } )
     
-    
-    fetch('http://localhost:3000/produits', requestOptions)
+    fetch('http://localhost:3000/magasins/'+this.state.stock_id, jsonStock)
        .then(response => response.json()
       )
       .then(data =>{console.log("enregitre avec succes vrai:",data)
-      console.log("data send",data)
-        this.setState({produit:data})
-        this.setState({nouveau:false})
+      this.setState({stock:data})
+     
      } )
+
+   
+
+
+
     }
   
 
-  handleChangeCategorie = (e) => {
+  handleChangeProduit = (e) => {
     var data=[]
+    var total=0
     console.log("adate =====>",e)
     try{
-      this.setState({famille:e.value,resultCategorie:e.label})
+      this.setState({produit_id:e.value,stock_id:e.id,qte_boutique:e.restantBoutique,qte_stock:e.restantStock})
+      $("#quantite-boutique").val(e.restantBoutique)
+      $("#quantite-depot").val(e.restantStock)
+      
+      this.setState({initialStock:parseInt(e.restantStock),initialBoutique:parseInt(e.restantBoutique)})
+      document.getElementById("valide").disabled = false;
     }catch(ee){
 
     }
+  
+  }
+
+  handleAddNew=()=>{
+    this.setState({nouveau:true,produit:[]})
+    fetch("http://localhost:3000/magasins")
+    .then((response) => response.json())
+    .then((data) => {
+       console.log("okkk====>",data)
+       var panier=data.filter(x => x.produit.qte<=5)
+      panier.map((el)=>{
+        this.setState({produit:[...this.state.produit,{value:el.produit.id,id:el.id,label:el.produit.nom,restantBoutique:el.produit.qte,restantStock:el.stock}]})
+      })
+    
+     }
+     
+    );
    
+    }
 
-    // e.map((element,idx) =>{
-    //   this.setState({thematiques_attributes:[...data,{"thematique_id":element.value}]})
-    // })
-  }
+ handleErrorValue=(e)=>{
+  console.log("value",e.target.value)
+  $("#quantite-depot").val(this.state.qte_stock)
+  $("#quantite-boutique").val(this.state.qte_boutique)
+   try{
+     if(parseInt(e.target.value)>parseInt($("#quantite-depot").val())){
+      $("#valideAppro").css("display","block")
+      $("#quantite").addClass("is-invalid")
+      this.setState({color:"red"})
+      document.getElementById("valide").disabled = true;
+     }else{
+      $("#valideAppro").css("display","none")
+      $("#quantite").removeClass("is-invalid")
+      this.setState({color:"black"})
+      document.getElementById("valide").disabled = false;
+      this.setState({ajoute:e.target.value})
+      if(e.target.value){
+        $("#quantite-boutique").val(parseInt($("#quantite-boutique").val())+parseInt(e.target.value))
+        $("#quantite-depot").val(parseInt($("#quantite-depot").val())-parseInt(e.target.value))
+      }else{
+        $("#quantite-depot").val(this.state.qte_stock)
+        $("#quantite-boutique").val(this.state.qte_boutique)
+      }
+      
+     }
+   }catch(error){
 
- handleAddNew=()=>{
-  this.setState({nouveau:true})
- // document.getElementById("valide").disabled = true;
-  }
+   }
+ }
 
 render() {
   const animatedComponents = makeAnimated();
@@ -153,7 +207,6 @@ render() {
       <Header />
       {/* Page content */}
       <Container className="mt--9" fluid>
-
       <Row className="mt-0">
       <Col className="mb-5 mb-xl-0" md="12">
          <Card className="shadow"> 
@@ -182,12 +235,11 @@ render() {
       </Row>
 
 
-
-
-     {
+    {
       (this.state.nouveau) ? 
       (
       <>
+   
       <Row className="mt-2">
         
           <Col className="order-xl-1" md="12">
@@ -195,7 +247,7 @@ render() {
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
                   <Col xs="8">
-                    <h3 className="mb-0">Ajouter Produit</h3>
+                    <h3 className="mb-0">Boutique/Aprovisionner</h3>
                   </Col>
                   <Col className="text-right" xs="4">
                     <Button
@@ -215,42 +267,62 @@ render() {
                     informations du produit
                   </h6>
                   <div className="pl-lg-4">
-                    
                     <Row>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-username"
-                          >
-                            intitulé
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            
-                            id="intitule"
-                            placeholder="intitulé du produit"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
+                  
                       <Col lg="6">
                         <FormGroup>
                           <label
                             className="form-control-label"
                             htmlFor="input-email"
                           >
-                            categorie
+                            produit
                           </label>
                           <ReactSelect
                             closeMenuOnSelect={true}
                             components={animatedComponents}
                             
-                            onChange={this.handleChangeCategorie}
-                            options={this.state.categorie}
+                             
+                            onChange={this.handleChangeProduit}
+                            options={this.state.produit}
 
-                            placeholder="Choisir la categorie"
+                            placeholder="Choisir le produit"
                       />
+                        </FormGroup>
+                      </Col>
+                      <Col lg="3">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-first-name"
+                          >
+                            Restant en Boutique
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            id="quantite-boutique"
+                            placeholder="quantité dans la boutique"
+                            type="text"
+                            style={{color:"black"}}
+                            readOnly
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col lg="3">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-first-name"
+                          >
+                            Restant en Dépot
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            id="quantite-depot"
+                            placeholder="quantité dans le dépot"
+                            type="text"
+                            readOnly
+                            style={{color:"black"}}
+                          />
                         </FormGroup>
                       </Col>
                     </Row>
@@ -261,56 +333,28 @@ render() {
                             className="form-control-label"
                             htmlFor="input-first-name"
                           >
-                            Quantité
+                            Quantité a ajouter
                           </label>
                           <Input
                             className="form-control-alternative"
                             id="quantite"
-                            placeholder="quantité"
+                            placeholder="donner la quantité a ajouter"
                             type="number"
+                            onChange={this.handleErrorValue}
+                            style={{color:this.state.color}}
                           />
+                          <div id="valideAppro" class="invalid-feedback">
+                            Quantité Non disponible en stock.
+                           </div>
                         </FormGroup>
                       </Col>
-                      <Col lg="6">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-last-name"
-                          >
-                            Prix de Vente
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            
-                            id="pv"
-                            placeholder="PV"
-                            type="number"
-                          />
-                        </FormGroup>
-                      </Col>
+                     
                     </Row>
                   
                     <hr className="my-4" />
                   {/* Description */}
                 
-                  <Row >
-                  <Col lg="6">
-                  <label
-                        className="form-control-label"
-                        htmlFor="input-last-name"
-                   >
-                           Code Produit
-                          </label>
-                  <Input
-                            className="form-control-alternative"
-                            id="code"
-                            placeholder="code"
-                            type="text"
-                            style={{color:this.state.color}}
-                            readOnly
-                          />
-                    </Col>
-                  </Row>
+                 
                   </div>
                   
           
@@ -339,8 +383,8 @@ render() {
           <div style={{textAlign:"right"}} >
             <Button
                 color="primary" 
-                onClick={this.handleSave}
                 id="valide"
+                onClick={this.handleSave}
                 size="md"
                         >
                         Ajouter
@@ -348,28 +392,18 @@ render() {
          </div> 
 
           </Col>
-        </Row>
-        <div>
-        <BarcodeReader
-          onError={this.handleError}
-          onScan={this.handleScan}
-          />
-       
-      </div>  </>):(
+        </Row></>):(
          <div className="mt-8">
-           <h3>Produit ajouté dans la boutique</h3>
+           <h3>Produit ravitaillé avec success</h3>
           <div id="echecSauv" className="alert alert-warning  mt-2" role="alert">
               <div>
-                <span>Nom: </span> {this.state.produit.nom}
+                <span>Nombre ajouté: </span> {this.state.ajoute}
               </div>
               <div>
-                <span>Categorie: </span> {this.state.produit.famille.nom}
+                <span>Quantité Stock Restant: </span>{this.state.stock.stock}
               </div>
               <div>
-                <span>Quantité: </span>{this.state.produit.qte}
-              </div>
-              <div>
-                <span>Prix: </span>{this.state.produit.pv}
+                <span>Quantité Totale Boutique: </span>{this.state.boutique.qte}
               </div>
            </div>
               <Row className="mt-2">
@@ -396,9 +430,10 @@ render() {
         
       )
     }
+        
       </Container>
     </>
   )};
 };
 
-export default AjouterProduit;
+export default ApprovisionerBoutique;

@@ -33,14 +33,8 @@ import {
   ButtonDropdown,
   
 } from "reactstrap";
+import $ from "jquery";
 
-// core components
-import {
-  chartOptions,
-  parseOptions,
-  chartExample1,
-  chartExample2,
-} from "variables/charts.js";
 import { format } from 'date-fns';
 import Header from "components/Headers/Header.js";
 import Flatpickr from "react-flatpickr"
@@ -52,7 +46,8 @@ class Vente extends Component {
         isOpen:false,
         isOpenCat:false,
         defaultDate:new Date(),
-        ventes:[]
+        ventes:[],
+        montant:0
       }
       this.handleDateDebut.bind(this);
       this.handleTrieDate.bind(this);
@@ -65,12 +60,18 @@ class Vente extends Component {
     this.setState({isOpenCat:!this.state.isOpenCat})
    }
   componentDidMount() {
+    var total=0
     fetch("http://localhost:3000/ventes")
     .then((response) => response.json())
     .then((data) => {
-   
-      //this.setState({ventes:data})
-    
+      console.log("ventes:",data)
+      const NewDate= format(new Date(),'yyyy-MM-dd')
+      var panier=data.filter(x => x.created_at.split("T")[0] === NewDate)
+      this.setState({ventes:panier})
+       panier.map(e=>{
+        total+=parseInt(e.montant)
+       })
+       $("#total").val(total+" FCFA")
      }
      
     );
@@ -83,18 +84,24 @@ class Vente extends Component {
     console.log("date",NewDate)
   }
   handleTrieDate=(e)=>{
-    
-    var date=e.target.value.split("-")[2]+"/"+e.target.value.split("-")[1]+"/"+e.target.value.split("-")[0]
+    var total=0
+    var date=e.target.value
     console.log("date trie",date)
-    // fetch("http://localhost:3000/ventes")
-    // .then((response) => response.json())
-    // .then((data) => {
-    //   var panier=data.filter(x => x.date === date)
-    //   this.setState({ventes:panier})
-    
-    //  }
+    fetch("http://localhost:3000/ventes")
+    .then((response) => response.json())
+    .then((data) => {
+      var panier=data.filter(x => x.created_at.split("T")[0] === date)
+      this.setState({ventes:panier})
+      panier.map(e=>{
+        total+=parseInt(e.montant)
+        console.log("someme",total)
+       })
+       var t=total
+       $("#total").val(total+" FCFA")
+       console.log("someme chap",total)
+     }
      
-    // );
+    );
   }
   render() {
  
@@ -126,7 +133,7 @@ class Vente extends Component {
                 onClick={this.handleRetour}
                 size="sm"
                         >
-                        <span><i style={{fontSize:"small"}} className="ni ni-fat-add mt-1" />Acheter Produits</span>
+                        <span><i style={{fontSize:"small"}} className="ni ni-fat-add mt-1" />Vendre Produits</span>
             </Button>
          </div>    
          </Col> 
@@ -159,10 +166,9 @@ class Vente extends Component {
                           <Input
                             className="form-control-alternative"
                             readOnly
-                            id="input-last-name"
-                            defaultValue="50.000000 FCFA"
-                            placeholder="50.000000 FCFA"
-                            type="number"
+                            id="total"
+                            placeholder="0 FCFA"
+                            type="text"
                           />
                         </FormGroup>
                   </Col>
@@ -178,7 +184,7 @@ class Vente extends Component {
                 
                           
                           <InputGroup>
-                          <Input onChange={this.handleTrieDate} type="date" id="start" name="trip-start" value={format(new Date(),'yyyy-MM-dd')} min="2021-01-01" max="2030-12-31"/>
+                          <Input onChange={this.handleTrieDate} type="date" id="date" name="trip-start" defaultValue={format(new Date(),'yyyy-MM-dd')} min="2021-01-01" max="2030-12-31"/>
                            </InputGroup>
                   </Col>
                 </Row>
@@ -190,6 +196,8 @@ class Vente extends Component {
                     <th scope="col">Heure</th>
                     <th scope="col">Client</th>
                     <th scope="col">Montant</th>
+                    <th scope="col">Encaisse</th>
+                    <th scope="col">Monnaie</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
@@ -198,12 +206,13 @@ class Vente extends Component {
                     this.state.ventes.map((data)=>(
                       (this.state.ventes.length!=0)?
                       (<tr>
-                      <td >{data.date}</td>
-                      <td >{data.heure}</td>
+                      <td >{data.created_at.split("T")[0]}</td>
+                      <td >{data.created_at.split("T")[1].split(":")[0]+":"+data.created_at.split("T")[1].split(":")[1]}</td>
                       <td >Anonyme</td>
                       
                       <td>{data.montant}</td>
-                    
+                      <td>{data.montantencaisse}</td>
+                      <td>{data.monnaie}</td>
                       <td>
                       <i style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
                       </td>
@@ -212,25 +221,7 @@ class Vente extends Component {
                     ))
                    
                 }  
-                  <tr>
-                    <td>05/06/2021</td>
-                    <td>12:05</td>
-                    <td>Anonyme</td>
-                    <td>25000</td>
-                    <td>
-                   <i style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
-                    </td>
-                  </tr>
-                  <tr>
-                  <td >05/06/2021</td>
-                  <td >15:54</td>
-                  <td >Martial</td>
-                  <td>200.000</td>
-                    
-                  <td>
-                    <i style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
-                  </td>
-                  </tr>
+              
                 
                 </tbody>
               </Table>

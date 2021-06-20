@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import { Component, React} from "react";
 // node.js library that concatenates classes (strings)
 import classnames from "classnames";
 // javascipt plugin for creating charts
@@ -39,21 +39,23 @@ import {
 
 import Header from "components/Headers/Header.js";
 
-const AjouterCategorie = (props) => {
-  const [activeNav, setActiveNav] = useState(1);
-  const [chartExample1Data, setChartExample1Data] = useState("data1");
 
-  if (window.Chart) {
-    parseOptions(Chart, chartOptions());
-  }
+class AjouterCategorie extends Component {
+  constructor(props) {
+      super(props)
+      this.state = {
+        ok:"",
+        coleur:"black",
+        nouveau:true,
+        categorie:""
+      }
+      
+    }
 
-  const toggleNavs = (e, index) => {
-    e.preventDefault();
-    setActiveNav(index);
-    setChartExample1Data("data" + index);
-  };
 
- const handleSave=()=>{
+
+
+  handleSave=()=>{
   
     
     var data= {
@@ -70,10 +72,18 @@ const AjouterCategorie = (props) => {
  )
  .then(data =>{
    console.log("enregitre avec succes vrai:",data)
-
+   this.setState({nouveau:false})
+   this.setState({categorie:data.nom})
 } )
 
   }
+  
+  handleAddNew=()=>{
+    this.setState({nouveau:true})
+
+  }
+
+render() {
   return (
     <>
       <Header />
@@ -108,7 +118,10 @@ const AjouterCategorie = (props) => {
 
 
 
-   
+    {
+      (this.state.nouveau) ? 
+      (
+      <>
       <Row className="mt-2">
         
           <Col className="order-xl-1" md="12">
@@ -143,7 +156,7 @@ const AjouterCategorie = (props) => {
                             className="form-control-label"
                             htmlFor="input-username"
                           >
-                            intitulé
+                            Nom
                           </label>
                           <Input
                             className="form-control-alternative"
@@ -158,21 +171,7 @@ const AjouterCategorie = (props) => {
                     <hr className="my-4" />
                   {/* Description */}
                 
-                  <Row >
-                  <Col lg="12">
-                  <FormGroup>
-                      <label>description</label>
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="description de la categorie"
-                        rows="4"
-                        // defaultValue="A beautiful Dashboard for Bootstrap 4. It is Free and
-                        // Open Source."
-                        type="textarea"
-                      />
-                    </FormGroup>
-                    </Col>
-                  </Row>
+                
                   </div>
                   
                     
@@ -201,7 +200,7 @@ const AjouterCategorie = (props) => {
           <div style={{textAlign:"right"}} >
             <Button
                 color="primary" 
-                onClick={handleSave}
+                onClick={this.handleSave}
                 size="md"
                         >
                         Ajouter
@@ -209,10 +208,46 @@ const AjouterCategorie = (props) => {
          </div> 
 
           </Col>
-        </Row>
+        </Row> </>):(
+         <div className="mt-8">
+           <h3>Catégorie ajouteé avec success</h3>
+          <div id="echecSauv" className="alert alert-warning  mt-2" role="alert">
+        
+              <div>
+                <span>Categorie: </span>  {this.state.categorie}
+              </div>
+             
+           </div>
+              <Row className="mt-2">
+              <Col md="8">
+
+              </Col>
+              <Col md="2">
+                
+              </Col>
+              <Col md="2">
+              <div style={{textAlign:"right"}} >
+                <Button
+                    color="primary" 
+                    onClick={this.handleAddNew}
+                    size="md"
+                            >
+                            OK
+                </Button>
+            </div> 
+
+              </Col>
+            </Row>
+       
+         </div>
+        
+      )
+    }
+
       </Container>
     </>
   );
 };
 
+}
 export default AjouterCategorie;
