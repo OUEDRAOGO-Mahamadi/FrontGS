@@ -41,7 +41,7 @@ import makeAnimated from 'react-select/animated';
 import Header from "components/Headers/Header.js";
 import  { Redirect } from 'react-router-dom'
 
- class ApprovisionerStock extends Component {
+ class AjouterProduit extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -49,30 +49,42 @@ import  { Redirect } from 'react-router-dom'
       isOpen:false,
       isOpenCat:false,
       result: 'No result',
+      categorie:[],
+      famille:{},
+      code:"",
       produit:[],
-      produit_id:0,
-      code:null,
-      stock:{},
-      initial:0,
-      quantiteFinale:0,
-      nouveau:true
+      resultCategorie:"",
+      nouveau:true,
+      detail:false,
+      color:"white"
+
     }
    
-    this.handleChangeProduit.bind(this);
-    this.handleErrorValue.bind(this)
+    this.handleChangeCategorie.bind(this);
   }
 
-
   componentDidMount() {
-    document.getElementById("valide").disabled = true;
-
-    fetch("http://localhost:3000/magasins")
+    var id=localStorage.getItem("idProduit")
+    fetch("http://localhost:3000/produits/"+id)
     .then((response) => response.json())
     .then((data) => {
        console.log("okkk====>",data)
-       var panier=data.filter(x => x.stock<=5)
-      panier.map((el)=>{
-        this.setState({produit:[...this.state.produit,{value:el.id,label:el.produit.nom,restantBoutique:el.produit.qte,restantStock:el.stock}]})
+       $("#intitule").val(data.nom)
+       $("#pv").val(data.pv)
+       $("#quantite").val(data.qte)
+       this.setState({code:data.codebarre})
+       this.setState({famille:{value:data.famille.id,label:data.famille.nom}})
+
+     }
+     
+    );
+
+    fetch("http://localhost:3000/familles")
+    .then((response) => response.json())
+    .then((data) => {
+       console.log("okkk====>",data)
+      data.map((el)=>{
+        this.setState({categorie:[...this.state.categorie,{value:el.id,label:el.nom}]})
       })
     
      }
@@ -80,93 +92,63 @@ import  { Redirect } from 'react-router-dom'
     );
     }
   handleSave=()=>{
-    var total=this.state.initial+parseInt($("#quantite").val())
+    var id=localStorage.getItem("idProduit")
+    
       var data= {
-        stock:total
-      
+        "nom": $("#intitule").val(),
+        "pv": $("#pv").val(),
+        "qte":$("#quantite").val(),
+        "famille_id":this.state.famille.value,
+        "codebarre": this.state.code,
+       
+    
       }
-      console.log("sendin data:",data.stock)
       const requestOptions = {
-        method: 'PATCH',
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json','Accept': 'application/json' },
         body: JSON.stringify(data)
-      };
+    };
       
     
     
-    fetch('http://localhost:3000/magasins/'+this.state.produit_id, requestOptions)
+    fetch('http://localhost:3000/produits/'+id, requestOptions)
        .then(response => response.json()
       )
       .then(data =>{console.log("enregitre avec succes vrai:",data)
-      this.setState({stock:data})
-      this.setState({nouveau:false})
-     
+      console.log("data send",data)
+        this.setState({produit:data})
+        this.setState({nouveau:false})
      } )
     }
   
 
-  handleChangeProduit = (e) => {
+  handleChangeCategorie = (e) => {
     var data=[]
-    var total=0
     console.log("adate =====>",e)
     try{
-      this.setState({produit_id:e.value,qte_boutique:e.restantBoutique,qte_stock:e.restantStock})
-      $("#quantite-boutique").val(e.restantBoutique)
-      $("#quantite-depot").val(e.restantStock)
-      
-      this.setState({initial:parseInt(e.restantStock)})
-      document.getElementById("valide").disabled = false;
+      this.setState({famille:{value:e.value,label:e.label},resultCategorie:e.label})
     }catch(ee){
 
     }
-  
-  }
-
-  handleAddNew=()=>{
-    this.setState({nouveau:true,produit:[]})
-    fetch("http://localhost:3000/magasins")
-    .then((response) => response.json())
-    .then((data) => {
-       console.log("okkk====>",data)
-       var panier=data.filter(x => x.stock<=5)
-      panier.map((el)=>{
-        this.setState({produit:[...this.state.produit,{value:el.id,label:el.produit.nom,restantBoutique:el.produit.qte,restantStock:el.stock}]})
-      })
-    
-     }
-     
-    );
    
-    }
 
-    handleErrorValue=(e)=>{
-      console.log("value",e.target.value)
-      $("#quantite-depot").val(this.state.qte_stock)
-      $("#quantite-boutique").val(this.state.qte_boutique)
-    
-      if(e.target.value){
-            
-            $("#quantite-depot").val(parseInt($("#quantite-depot").val())+parseInt(e.target.value))
-      }else{
-            $("#quantite-depot").val(this.state.qte_stock)
-            
-      }
-          
-     
-     }
-
-
- handleRetour=()=>{
-      this.setState({ok: <Redirect to='/admin/magazin'/>});
+    // e.map((element,idx) =>{
+    //   this.setState({thematiques_attributes:[...data,{"thematique_id":element.value}]})
+    // })
   }
+
+  handleRetour=()=>{
+    this.setState({ok: <Redirect to='/admin/produit'/>});
+ }
 
 render() {
   const animatedComponents = makeAnimated();
   return (
     <>
       <Header />
-      {/* Page content */}  {this.state.ok}
+      {/* Page content */}   {this.state.ok}
       <Container className="mt--9" fluid>
+
       <Row className="mt-0">
       <Col className="mb-5 mb-xl-0" md="12">
          <Card className="shadow"> 
@@ -180,7 +162,7 @@ render() {
                 onClick={this.handleRetour}
                 size="sm"
                         >
-                        Retour Dépot
+                        Retour
             </Button>
          </div>    
          </Col> 
@@ -195,11 +177,12 @@ render() {
       </Row>
 
 
-    {
+
+
+     {
       (this.state.nouveau) ? 
       (
       <>
-   
       <Row className="mt-2">
         
           <Col className="order-xl-1" md="12">
@@ -207,9 +190,18 @@ render() {
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
                   <Col xs="8">
-                    <h3 className="mb-0">Dépot/Aprovisionner</h3>
+                    <h3 className="mb-0">Modifier Produit</h3>
                   </Col>
-                
+                  <Col className="text-right" xs="4">
+                    <Button
+                      color="primary"
+                      href="#pablo"
+                      onClick={(e) => e.preventDefault()}
+                      size="sm"
+                    >
+                      Settings
+                    </Button>
+                  </Col>
                 </Row>
               </CardHeader>
               <CardBody>
@@ -218,59 +210,42 @@ render() {
                     informations du produit
                   </h6>
                   <div className="pl-lg-4">
+                    
                     <Row>
-                  
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-username"
+                          >
+                            nom
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            
+                            id="intitule"
+                            placeholder="intitulé du produit"
+                            type="text"
+                          />
+                        </FormGroup>
+                      </Col>
                       <Col lg="6">
                         <FormGroup>
                           <label
                             className="form-control-label"
                             htmlFor="input-email"
                           >
-                            produit
+                            categorie
                           </label>
                           <ReactSelect
                             closeMenuOnSelect={true}
                             components={animatedComponents}
-
-                            onChange={this.handleChangeProduit}
-                            options={this.state.produit}
-
-                            placeholder="Choisir le produit"
+                            //defaultValue={this.state.famille}
+                            onChange={this.handleChangeCategorie}
+                            options={this.state.categorie}
+                            id="categorie"
+                            placeholder={this.state.famille.label}
                       />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="3">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-first-name"
-                          >
-                            Restant en Boutique
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="quantite-boutique"
-                            placeholder="quantité dans la boutique"
-                            type="number"
-                            readOnly
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="3">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-first-name"
-                          >
-                            Restant en Dépot
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="quantite-depot"
-                            placeholder="quantité dans le dépot"
-                            type="number"
-                            readOnly
-                          />
                         </FormGroup>
                       </Col>
                     </Row>
@@ -281,24 +256,39 @@ render() {
                             className="form-control-label"
                             htmlFor="input-first-name"
                           >
-                            Quantité a ajouter
+                            Quantité
                           </label>
                           <Input
                             className="form-control-alternative"
                             id="quantite"
-                            onChange={this.handleErrorValue}
-                            placeholder="donner la quantité a ajouter"
+                            placeholder="quantité"
                             type="number"
                           />
                         </FormGroup>
                       </Col>
-                     
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-last-name"
+                          >
+                            Prix de Vente
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            
+                            id="pv"
+                            placeholder="PV"
+                            type="number"
+                          />
+                        </FormGroup>
+                      </Col>
                     </Row>
                   
                     <hr className="my-4" />
                   {/* Description */}
                 
-                 
+                
                   </div>
                   
           
@@ -316,7 +306,7 @@ render() {
             <div style={{textAlign:"right"}} >
               <Button
                   color="secondary" 
-                  //onClick={this.handleRetour}
+                  onClick={this.handleRetour}
                   size="md"
                           >
                           Annuler
@@ -327,8 +317,8 @@ render() {
           <div style={{textAlign:"right"}} >
             <Button
                 color="primary" 
-                id="valide"
                 onClick={this.handleSave}
+                id="valide"
                 size="md"
                         >
                         Ajouter
@@ -336,15 +326,25 @@ render() {
          </div> 
 
           </Col>
-        </Row></>):(
+        </Row>
+        <div>
+       
+       
+      </div>  </>):(
          <div className="mt-8">
-           <h3>Produit ravitaillé avec success</h3>
+           <h3>Produit modifié dans la boutique</h3>
           <div id="echecSauv" className="alert alert-warning  mt-2" role="alert">
               <div>
-                <span>Nombre ajouté: </span> {$("#quantite").val()}
+                <span>Nom: </span> {this.state.produit.nom}
               </div>
               <div>
-                <span>Quantité Totale: </span>{this.state.stock.stock}
+                <span>Categorie: </span> {this.state.produit.famille.nom}
+              </div>
+              <div>
+                <span>Quantité: </span>{this.state.produit.qte}
+              </div>
+              <div>
+                <span>Prix: </span>{this.state.produit.pv}
               </div>
            </div>
               <Row className="mt-2">
@@ -358,10 +358,10 @@ render() {
               <div style={{textAlign:"right"}} >
                 <Button
                     color="primary" 
-                    onClick={this.handleAddNew}
+                    onClick={this.handleRetour}
                     size="md"
                             >
-                            OK
+                            Retour
                 </Button>
             </div> 
 
@@ -371,10 +371,9 @@ render() {
         
       )
     }
-        
       </Container>
     </>
   )};
 };
 
-export default ApprovisionerStock;
+export default AjouterProduit;

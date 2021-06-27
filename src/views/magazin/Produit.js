@@ -41,6 +41,7 @@ import {
 } from "variables/charts.js";
 
 import Header from "components/Headers/Header.js";
+import Confirmer from "components/Confirmer.js";
 
 class ProduitMagazin extends Component {
   constructor(props) {
@@ -50,10 +51,16 @@ class ProduitMagazin extends Component {
       isOpen:false,
       isOpenCat:false,
       stock:[],
-      categorie:[]
+      categorie:[],
+      id:0,show:false
     }
     this.handleTieCategorie.bind(this)
     this.handleTieStock.bind(this)
+    this.supprimer.bind(this)
+    this.handleDetail.bind(this)
+    this.handleModifier.bind(this)
+    this.handleTrie.bind(this)
+    this.handleCharge.bind(this)
   }
 
 toggle=()=>{
@@ -130,6 +137,55 @@ toggleCat=()=>{
   handleRetour=()=>{
     this.setState({ok: <Redirect to='/admin/ajouter-stock'/>});
   }
+
+  toggle=()=>{
+    this.setState({show:!this.state.show})
+  }
+
+  supprimer=(id)=>{
+    this.setState({id:id,show:true})
+  }
+
+  handleSupprimer=()=>{
+
+    const requestOptions = {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json','Accept': 'application/json' },
+     // body: JSON.stringify(data)
+    };
+    
+  
+  
+  fetch('http://localhost:3000/magasins/'+this.state.id, requestOptions)
+    
+    .then(data =>{console.log("enregitre avec succes vrai:",data)
+    console.log("data send",data)
+      this.setState({stock:this.state.stock.filter(element=>element.id!=this.state.id)})
+      this.setState({show:false})
+     
+   } )
+  }
+
+  handleDetail=(id)=>{
+    localStorage.setItem('idDepot',id);
+    this.setState({ok: <Redirect to='/admin/detail-depot'/>});
+  }
+
+  handleModifier=(id)=>{
+    localStorage.setItem('idDepot',id);
+    this.setState({ok: <Redirect to='/admin/modifier-depot'/>});
+  }
+handleTrie=(e)=>{
+ console.log("data send",e.target.value)
+ var data= this.state.stock.filter((data) =>  JSON.stringify(data).toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1)
+ this.setState({stock:data})
+
+ if(e.target.value==""){
+   this.handleCharge()
+ }
+}
+
+
   render() {
  
   return (
@@ -137,6 +193,11 @@ toggleCat=()=>{
       <Header />
       {/* Page content */}            {this.state.ok}
       <Container className="mt--9" fluid>
+
+      <Confirmer show={this.state.show} handleValider={this.handleSupprimer} toggle={this.toggle}/>
+
+
+
       <Row className="mt-0">
       <Col className="mb-5 mb-xl-0" md="12">
          <Card className="shadow"> 
@@ -149,7 +210,7 @@ toggleCat=()=>{
                     <i className="fas fa-search" />
                   </InputGroupText>
                 </InputGroupAddon>
-                <Input placeholder="Search" type="text" />
+                <Input placeholder="Search" onChange={this.handleTrie} type="text" />
         </InputGroup>
              
         </Col> 
@@ -237,7 +298,7 @@ toggleCat=()=>{
                         <td>{data.pa}</td>
                         <td><Badge style={{fontSize:"small",cursor:"pointer"}} pill color="success">{data.stock}</Badge></td>
                         <td>
-                        <i style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
+                        <i onClick={this.handleModifier.bind(this,data.id)} style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i onClick={this.handleDetail.bind(this,data.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i  onClick={this.supprimer.bind(this,data.id)} style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
                         </td>
                       </tr>):
                       (<tr>
@@ -247,7 +308,7 @@ toggleCat=()=>{
                           <td>{data.pa}</td>
                           <td><Badge style={{fontSize:"small",cursor:"pointer"}} pill color="warning">{data.stock}</Badge></td>
                           <td>
-                          <i style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
+                          <i onClick={this.handleModifier.bind(this,data.id)} style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i onClick={this.handleDetail.bind(this,data.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i  onClick={this.supprimer.bind(this,data.id)} style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
                           </td>
                         </tr>)
                   ):null

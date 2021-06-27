@@ -52,12 +52,18 @@ class Produit extends Component {
         ok:"",
         isOpen:false,
         isOpenCat:false,
-        show:true,
+        show:false,
         produits:[],
-        categorie:[]
+        categorie:[],
+        id:0
       }
       this.handleTieCategorie.bind(this)
       this.handleTieStock.bind(this)
+      this.supprimer.bind(this)
+      this.handleDetail.bind(this)
+      this.handleModifier.bind(this)
+      this.handleTrie.bind(this)
+
     }
  
   toggle=()=>{
@@ -123,6 +129,67 @@ class Produit extends Component {
     );
    
   }
+
+  toggle=()=>{
+    this.setState({show:!this.state.show})
+  }
+
+  supprimer=(id)=>{
+    this.setState({id:id,show:true})
+  }
+
+  handleSupprimer=()=>{
+
+    const requestOptions = {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json','Accept': 'application/json' },
+     // body: JSON.stringify(data)
+    };
+    
+  
+  
+  fetch('http://localhost:3000/produits/'+this.state.id, requestOptions)
+    
+    .then(data =>{console.log("enregitre avec succes vrai:",data)
+    console.log("data send",data)
+      this.setState({produits:this.state.produits.filter(element=>element.id!=this.state.id)})
+      this.setState({show:false})
+     
+   } )
+  }
+
+  handleDetail=(id)=>{
+    localStorage.setItem('idProduit',id);
+    this.setState({ok: <Redirect to='/admin/detail-produit'/>});
+  }
+
+  handleModifier=(id)=>{
+    localStorage.setItem('idProduit',id);
+    this.setState({ok: <Redirect to='/admin/modifier-produit'/>});
+  }
+
+  handleCharge=()=>{
+    fetch("http://localhost:3000/produits")
+    .then((response) => response.json())
+    .then((data) => {
+       console.log("okkk====>",data)
+       this.setState({produits:data.reverse()})
+    
+     }
+     
+    );
+  }
+
+  handleTrie=(e)=>{
+    console.log("data send",e.target.value)
+    var data= this.state.produits.filter((data) =>  JSON.stringify(data).toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1)
+    this.setState({produits:data})
+   
+    if(e.target.value==""){
+      this.handleCharge()
+    }
+   }
+
   render() {
  
   return (
@@ -134,6 +201,7 @@ class Produit extends Component {
      
 
       <Container className="mt--9" fluid>
+        <Confirmer show={this.state.show} handleValider={this.handleSupprimer} toggle={this.toggle}/>
   
       <Row className="mt-0">
       <Col className="mb-5 mb-xl-0" md="12">
@@ -147,7 +215,7 @@ class Produit extends Component {
                     <i className="fas fa-search" />
                   </InputGroupText>
                 </InputGroupAddon>
-                <Input placeholder="Search" type="text" />
+                <Input placeholder="Search" onChange={this.handleTrie} type="text" />
         </InputGroup>
              
         </Col> 
@@ -234,7 +302,7 @@ class Produit extends Component {
                               <td>{element.pv}</td>
                               <td><Badge style={{fontSize:"small",cursor:"pointer"}} pill color="success">{element.qte}</Badge></td>
                               <td>
-                                <i style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i style={{fontSize:"medium",cursor:"pointer"}} onClick={()=>this.setState({show:true})} className="fas fa-trash-alt text-danger mr-3"/>
+                                <i onClick={this.handleModifier.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i onClick={this.handleDetail.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i style={{fontSize:"medium",cursor:"pointer"}} onClick={this.supprimer.bind(this,element.id)} className="fas fa-trash-alt text-danger mr-3"/>
                               </td>
                             </tr>):
                             (<tr>
@@ -244,7 +312,7 @@ class Produit extends Component {
                               <td>{element.pv}</td>
                               <td><Badge style={{fontSize:"small",cursor:"pointer"}} pill color="warning">{element.qte}</Badge></td>
                               <td>
-                                <i style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i style={{fontSize:"medium",cursor:"pointer"}} onClick={()=>this.setState({show:true})} className="fas fa-trash-alt text-danger mr-3"/>
+                                <i onClick={this.handleModifier.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i onClick={this.handleDetail.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i style={{fontSize:"medium",cursor:"pointer"}} onClick={this.supprimer.bind(this,element.id)} className="fas fa-trash-alt text-danger mr-3"/>
                               </td>
                             </tr>)
                           ))

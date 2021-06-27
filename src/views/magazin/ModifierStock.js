@@ -7,6 +7,7 @@ import Chart from "chart.js";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
 // reactstrap components
+import  { Redirect } from 'react-router-dom'
 import $ from "jquery";
 import {
   Button,
@@ -39,9 +40,8 @@ import {
 import ReactSelect from 'react-select'
 import makeAnimated from 'react-select/animated';
 import Header from "components/Headers/Header.js";
-import  { Redirect } from 'react-router-dom'
 
- class ApprovisionerStock extends Component {
+ class ModifierStock extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -51,114 +51,61 @@ import  { Redirect } from 'react-router-dom'
       result: 'No result',
       produit:[],
       produit_id:0,
-      code:null,
-      stock:{},
-      initial:0,
-      quantiteFinale:0,
-      nouveau:true
+      nouveau:true,
+      detail:false,
+      magazin:{},
+      code:null
     }
    
-    this.handleChangeProduit.bind(this);
-    this.handleErrorValue.bind(this)
   }
 
 
   componentDidMount() {
-    document.getElementById("valide").disabled = true;
+    var id=localStorage.getItem("idDepot")
 
-    fetch("http://localhost:3000/magasins")
+    fetch("http://localhost:3000/magasins/"+id)
     .then((response) => response.json())
     .then((data) => {
        console.log("okkk====>",data)
-       var panier=data.filter(x => x.stock<=5)
-      panier.map((el)=>{
-        this.setState({produit:[...this.state.produit,{value:el.id,label:el.produit.nom,restantBoutique:el.produit.qte,restantStock:el.stock}]})
-      })
+       $("#pv").val(data.pa)
+       $("#quantite").val(data.stock)
+       $("#produit").val(data.produit.nom)
     
      }
      
     );
     }
   handleSave=()=>{
-    var total=this.state.initial+parseInt($("#quantite").val())
+    var id=localStorage.getItem("idDepot")
       var data= {
-        stock:total
-      
+        "pa": $("#pv").val(),
+        "stock":$("#quantite").val(),
+    
       }
-      console.log("sendin data:",data.stock)
       const requestOptions = {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json','Accept': 'application/json' },
         body: JSON.stringify(data)
-      };
+    };
       
     
     
-    fetch('http://localhost:3000/magasins/'+this.state.produit_id, requestOptions)
+    fetch('http://localhost:3000/magasins/'+id, requestOptions)
        .then(response => response.json()
       )
       .then(data =>{console.log("enregitre avec succes vrai:",data)
-      this.setState({stock:data})
+      this.setState({magazin:data})
       this.setState({nouveau:false})
      
      } )
     }
   
 
-  handleChangeProduit = (e) => {
-    var data=[]
-    var total=0
-    console.log("adate =====>",e)
-    try{
-      this.setState({produit_id:e.value,qte_boutique:e.restantBoutique,qte_stock:e.restantStock})
-      $("#quantite-boutique").val(e.restantBoutique)
-      $("#quantite-depot").val(e.restantStock)
-      
-      this.setState({initial:parseInt(e.restantStock)})
-      document.getElementById("valide").disabled = false;
-    }catch(ee){
+ 
 
-    }
-  
-  }
-
-  handleAddNew=()=>{
-    this.setState({nouveau:true,produit:[]})
-    fetch("http://localhost:3000/magasins")
-    .then((response) => response.json())
-    .then((data) => {
-       console.log("okkk====>",data)
-       var panier=data.filter(x => x.stock<=5)
-      panier.map((el)=>{
-        this.setState({produit:[...this.state.produit,{value:el.id,label:el.produit.nom,restantBoutique:el.produit.qte,restantStock:el.stock}]})
-      })
-    
-     }
-     
-    );
-   
-    }
-
-    handleErrorValue=(e)=>{
-      console.log("value",e.target.value)
-      $("#quantite-depot").val(this.state.qte_stock)
-      $("#quantite-boutique").val(this.state.qte_boutique)
-    
-      if(e.target.value){
-            
-            $("#quantite-depot").val(parseInt($("#quantite-depot").val())+parseInt(e.target.value))
-      }else{
-            $("#quantite-depot").val(this.state.qte_stock)
-            
-      }
-          
-     
-     }
-
-
- handleRetour=()=>{
-      this.setState({ok: <Redirect to='/admin/magazin'/>});
-  }
+  handleRetour=()=>{
+    this.setState({ok: <Redirect to='/admin/magazin'/>});
+ }
 
 render() {
   const animatedComponents = makeAnimated();
@@ -180,7 +127,7 @@ render() {
                 onClick={this.handleRetour}
                 size="sm"
                         >
-                        Retour Dépot
+                        Precedent
             </Button>
          </div>    
          </Col> 
@@ -195,7 +142,7 @@ render() {
       </Row>
 
 
-    {
+      {
       (this.state.nouveau) ? 
       (
       <>
@@ -207,15 +154,24 @@ render() {
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
                   <Col xs="8">
-                    <h3 className="mb-0">Dépot/Aprovisionner</h3>
+                    <h3 className="mb-0">Modifier le stock</h3>
                   </Col>
-                
+                  <Col className="text-right" xs="4">
+                    <Button
+                      color="primary"
+                      href="#pablo"
+                      onClick={(e) => e.preventDefault()}
+                      size="sm"
+                    >
+                      Settings
+                    </Button>
+                  </Col>
                 </Row>
               </CardHeader>
               <CardBody>
                 <Form>
                   <h6 className="heading-small text-muted mb-4">
-                    informations du produit
+                    informations du produit dans le stock
                   </h6>
                   <div className="pl-lg-4">
                     <Row>
@@ -228,48 +184,12 @@ render() {
                           >
                             produit
                           </label>
-                          <ReactSelect
-                            closeMenuOnSelect={true}
-                            components={animatedComponents}
-
-                            onChange={this.handleChangeProduit}
-                            options={this.state.produit}
-
-                            placeholder="Choisir le produit"
-                      />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="3">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-first-name"
-                          >
-                            Restant en Boutique
-                          </label>
                           <Input
                             className="form-control-alternative"
-                            id="quantite-boutique"
-                            placeholder="quantité dans la boutique"
-                            type="number"
+                            id="produit"
                             readOnly
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col lg="3">
-                        <FormGroup>
-                          <label
-                            className="form-control-label"
-                            htmlFor="input-first-name"
-                          >
-                            Restant en Dépot
-                          </label>
-                          <Input
-                            className="form-control-alternative"
-                            id="quantite-depot"
-                            placeholder="quantité dans le dépot"
-                            type="number"
-                            readOnly
+                            placeholder="quantité"
+                            type="text"
                           />
                         </FormGroup>
                       </Col>
@@ -281,18 +201,33 @@ render() {
                             className="form-control-label"
                             htmlFor="input-first-name"
                           >
-                            Quantité a ajouter
+                            Quantité
                           </label>
                           <Input
                             className="form-control-alternative"
                             id="quantite"
-                            onChange={this.handleErrorValue}
-                            placeholder="donner la quantité a ajouter"
+                            placeholder="quantité"
                             type="number"
                           />
                         </FormGroup>
                       </Col>
-                     
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-last-name"
+                          >
+                            Prix d' Achat
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            
+                            id="pv"
+                            placeholder="PV"
+                            type="number"
+                          />
+                        </FormGroup>
+                      </Col>
                     </Row>
                   
                     <hr className="my-4" />
@@ -316,7 +251,7 @@ render() {
             <div style={{textAlign:"right"}} >
               <Button
                   color="secondary" 
-                  //onClick={this.handleRetour}
+                  onClick={this.handleRetour}
                   size="md"
                           >
                           Annuler
@@ -327,24 +262,29 @@ render() {
           <div style={{textAlign:"right"}} >
             <Button
                 color="primary" 
-                id="valide"
                 onClick={this.handleSave}
                 size="md"
                         >
-                        Ajouter
+                        Modifier
             </Button>
          </div> 
 
           </Col>
-        </Row></>):(
+        </Row>) </>):(
          <div className="mt-8">
-           <h3>Produit ravitaillé avec success</h3>
+           <h3>Produit modifié dans le magasin</h3>
           <div id="echecSauv" className="alert alert-warning  mt-2" role="alert">
               <div>
-                <span>Nombre ajouté: </span> {$("#quantite").val()}
+                <span>Nom: </span> {this.state.magazin.produit.nom}
               </div>
               <div>
-                <span>Quantité Totale: </span>{this.state.stock.stock}
+                <span>Categorie: </span> {this.state.magazin.produit.famille.nom}
+              </div>
+              <div>
+                <span>Quantité: </span>{this.state.magazin.stock}
+              </div>
+              <div>
+                <span>Prix: </span>{this.state.magazin.pa}
               </div>
            </div>
               <Row className="mt-2">
@@ -358,7 +298,7 @@ render() {
               <div style={{textAlign:"right"}} >
                 <Button
                     color="primary" 
-                    onClick={this.handleAddNew}
+                    onClick={this.handleRetour}
                     size="md"
                             >
                             OK
@@ -377,4 +317,4 @@ render() {
   )};
 };
 
-export default ApprovisionerStock;
+export default ModifierStock;

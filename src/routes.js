@@ -69,7 +69,7 @@ var routes = [
   },
   {
     path: "/approvision",
-    name: "Approvsionnement",
+    name: "Approvisionnement",
     icon: "ni ni-shop text-blue",
     component: ApprovisionerStock,
     layout: "/admin",
@@ -88,13 +88,13 @@ var routes = [
     component: User,
     layout: "/admin",
   },
-  {
-    path: "/index",
-    name: "Dashboard",
-    icon: "ni ni-tv-2 text-primary",
-    component: Index,
-    layout: "/admin",
-  },
+  // {
+  //   path: "/index",
+  //   name: "Dashboard",
+  //   icon: "ni ni-tv-2 text-primary",
+  //   component: Index,
+  //   layout: "/admin",
+  // },
   // {
   //   path: "/icons",
   //   name: "Icons",

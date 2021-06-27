@@ -38,6 +38,7 @@ import $ from "jquery";
 import { format } from 'date-fns';
 import Header from "components/Headers/Header.js";
 import Flatpickr from "react-flatpickr"
+
 class Vente extends Component {
   constructor(props) {
       super(props)
@@ -47,10 +48,13 @@ class Vente extends Component {
         isOpenCat:false,
         defaultDate:new Date(),
         ventes:[],
-        montant:0
+        montant:0,
+        date:""
       }
       this.handleDateDebut.bind(this);
       this.handleTrieDate.bind(this);
+      this.handleDetail.bind(this)
+      this.handleTrie.bind(this)
     }
  
   toggle=()=>{
@@ -86,6 +90,7 @@ class Vente extends Component {
   handleTrieDate=(e)=>{
     var total=0
     var date=e.target.value
+    this.setState({date:date})
     console.log("date trie",date)
     fetch("http://localhost:3000/ventes")
     .then((response) => response.json())
@@ -103,6 +108,48 @@ class Vente extends Component {
      
     );
   }
+
+  
+  handleDetail=(id)=>{
+    localStorage.setItem('idVente',id);
+    this.setState({ok: <Redirect to='/admin/detail-vente'/>});
+  }
+
+  handleCharge=()=>{
+    var total=0
+    fetch("http://localhost:3000/ventes")
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("ventes:",data)
+      const NewDate= format(new Date(),'yyyy-MM-dd')
+      var panier=data.filter(x => x.created_at.split("T")[0] === this.state.date)
+      this.setState({ventes:panier})
+       panier.map(e=>{
+        total+=parseInt(e.montant)
+       })
+       $("#total").val(total+" FCFA")
+     }
+     
+    );
+  }
+
+  handleTrie=(e)=>{
+    var total=0
+    console.log("data send",e.target.value)
+    var data= this.state.ventes.filter((data) =>  JSON.stringify(data).toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1)
+
+       data.map(e=>{
+        total+=parseInt(e.montant)
+       })
+       $("#total").val(total+" FCFA")
+    
+    this.setState({ventes:data})
+   
+    if(e.target.value==""){
+      this.handleCharge()
+    }
+   }
+
   render() {
  
   return (
@@ -122,7 +169,7 @@ class Vente extends Component {
                     <i className="fas fa-search" />
                   </InputGroupText>
                 </InputGroupAddon>
-                <Input placeholder="Search" type="text" />
+                <Input placeholder="Rechercher" onChange={this.handleTrie}  type="text" />
         </InputGroup>
              
         </Col> 
@@ -214,7 +261,7 @@ class Vente extends Component {
                       <td>{data.montantencaisse}</td>
                       <td>{data.monnaie}</td>
                       <td>
-                      <i style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
+                      <i onClick={this.handleDetail.bind(this,data.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
                       </td>
                     </tr>):null
 
