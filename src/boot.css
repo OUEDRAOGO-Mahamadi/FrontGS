@@ -11,3 +11,12 @@
     color: #e9dccd;
     background-color: #3a4e64;
 }
+
+
+
+.navbar-vertical.navbar-expand-md .navbar-brand {
+    display: block;
+    text-align: center;
+    padding-top: 1rem;
+    padding-bottom: 0rem; 
+}

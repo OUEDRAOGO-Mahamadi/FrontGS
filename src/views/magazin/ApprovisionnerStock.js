@@ -339,7 +339,7 @@ render() {
         </Row></>):(
          <div className="mt-8">
            <h3>Produit ravitaillé avec success</h3>
-          <div id="echecSauv" className="alert alert-warning  mt-2" role="alert">
+          <div id="echecSauv" className="alert alert-dark  mt-2" role="alert">
               <div>
                 <span>Nombre ajouté: </span> {$("#quantite").val()}
               </div>

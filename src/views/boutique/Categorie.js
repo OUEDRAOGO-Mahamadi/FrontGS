@@ -60,6 +60,10 @@ class Categorie extends Component {
     );
   }
 
+  handleModifier=(id)=>{
+    localStorage.setItem('idCategorie',id);
+    this.setState({ok: <Redirect to='/admin/modifier-categorie'/>});
+  }
  
   
   handleRetour=()=>{
@@ -84,7 +88,7 @@ class Categorie extends Component {
                     <i className="fas fa-search" />
                   </InputGroupText>
                 </InputGroupAddon>
-                <Input placeholder="Search" type="text" />
+                <Input placeholder="Rechercher" type="text" />
         </InputGroup>
              
         </Col> 
@@ -114,16 +118,7 @@ class Categorie extends Component {
                   <div className="col">
                     <h3 className="mb-0">Liste des Catégories</h3>
                   </div>
-                  <div className="col text-right">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Voir Tout
-                    </Button>
-                  </div>
+                
                 </Row>
               </CardHeader>
               <Table className="align-items-center table-flush" responsive>
@@ -142,7 +137,7 @@ class Categorie extends Component {
                       <td>Vaiselle</td>
                       
                         <td>
-                        <i style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
+                        <i onClick={this.handleModifier.bind(this,data.id)}  style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" />
                         </td>
                       </tr>
 

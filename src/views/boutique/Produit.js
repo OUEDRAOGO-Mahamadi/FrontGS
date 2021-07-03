@@ -8,6 +8,7 @@ import Chart from "chart.js";
 import { Line, Bar } from "react-chartjs-2";
 // reactstrap components
 import  { Redirect } from 'react-router-dom'
+import $ from "jquery";
 import {
   Button,
   Card,
@@ -55,7 +56,8 @@ class Produit extends Component {
         show:false,
         produits:[],
         categorie:[],
-        id:0
+        id:0,
+        user:JSON.parse(localStorage.getItem('user'))
       }
       this.handleTieCategorie.bind(this)
       this.handleTieStock.bind(this)
@@ -73,6 +75,14 @@ class Produit extends Component {
     this.setState({isOpenCat:!this.state.isOpenCat})
    }
   componentDidMount() {
+   var user= JSON.parse(localStorage.getItem('user'))
+   if(user.role!="ADMIN"){
+     $("#role1").css("display","none")
+     $("#role2").css("display","none")
+     $("#role3").css("display","none")
+     $(".txt").css("display","none")
+   }
+
     fetch("http://localhost:3000/produits")
     .then((response) => response.json())
     .then((data) => {
@@ -130,12 +140,14 @@ class Produit extends Component {
    
   }
 
-  toggle=()=>{
+  toggled=()=>{
     this.setState({show:!this.state.show})
   }
 
   supprimer=(id)=>{
+    if(this.state.user.role=="ADMIN"){
     this.setState({id:id,show:true})
+    }
   }
 
   handleSupprimer=()=>{
@@ -164,8 +176,10 @@ class Produit extends Component {
   }
 
   handleModifier=(id)=>{
+    if(this.state.user.role=="ADMIN"){
     localStorage.setItem('idProduit',id);
     this.setState({ok: <Redirect to='/admin/modifier-produit'/>});
+    }
   }
 
   handleCharge=()=>{
@@ -201,7 +215,7 @@ class Produit extends Component {
      
 
       <Container className="mt--9" fluid>
-        <Confirmer show={this.state.show} handleValider={this.handleSupprimer} toggle={this.toggle}/>
+        <Confirmer show={this.state.show} handleValider={this.handleSupprimer} toggle={this.toggled}/>
   
       <Row className="mt-0">
       <Col className="mb-5 mb-xl-0" md="12">
@@ -215,7 +229,7 @@ class Produit extends Component {
                     <i className="fas fa-search" />
                   </InputGroupText>
                 </InputGroupAddon>
-                <Input placeholder="Search" onChange={this.handleTrie} type="text" />
+                <Input placeholder="Rechercher" onChange={this.handleTrie} type="text" />
         </InputGroup>
              
         </Col> 
@@ -302,7 +316,7 @@ class Produit extends Component {
                               <td>{element.pv}</td>
                               <td><Badge style={{fontSize:"small",cursor:"pointer"}} pill color="success">{element.qte}</Badge></td>
                               <td>
-                                <i onClick={this.handleModifier.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i onClick={this.handleDetail.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i style={{fontSize:"medium",cursor:"pointer"}} onClick={this.supprimer.bind(this,element.id)} className="fas fa-trash-alt text-danger mr-3"/>
+                                <i id="role1" onClick={this.handleModifier.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i onClick={this.handleDetail.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i id="role2" style={{fontSize:"medium",cursor:"pointer"}} onClick={this.supprimer.bind(this,element.id)} className="fas fa-trash-alt text-danger  mr-3"/>
                               </td>
                             </tr>):
                             (<tr>
@@ -312,7 +326,7 @@ class Produit extends Component {
                               <td>{element.pv}</td>
                               <td><Badge style={{fontSize:"small",cursor:"pointer"}} pill color="warning">{element.qte}</Badge></td>
                               <td>
-                                <i onClick={this.handleModifier.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i onClick={this.handleDetail.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i style={{fontSize:"medium",cursor:"pointer"}} onClick={this.supprimer.bind(this,element.id)} className="fas fa-trash-alt text-danger mr-3"/>
+                                <i id="role3" onClick={this.handleModifier.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3 role" ></i><i onClick={this.handleDetail.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i id="role4" style={{fontSize:"medium",cursor:"pointer"}} onClick={this.supprimer.bind(this,element.id)} className="fas fa-trash-alt role text-danger mr-3"/>
                               </td>
                             </tr>)
                           ))

@@ -39,6 +39,7 @@ import {
 import ReactSelect from 'react-select'
 import makeAnimated from 'react-select/animated';
 import Header from "components/Headers/Header.js";
+import  { Redirect } from 'react-router-dom'
 
  class AjouterStock extends Component {
   constructor(props) {
@@ -76,10 +77,17 @@ import Header from "components/Headers/Header.js";
     );
     }
   handleSave=()=>{
-  
+      let pa=$("#pv").val()
+      let stock=$("#quantite").val()
+      if(pa==""){
+       pa=0
+      }
+      if(stock==""){
+        stock=0
+       }
       var data= {
-        "pa": $("#pv").val(),
-        "stock":$("#quantite").val(),
+        "pa": pa,
+        "stock":stock,
         "produit_id":this.state.produit_id,
     
       }
@@ -89,16 +97,20 @@ import Header from "components/Headers/Header.js";
         body: JSON.stringify(data)
     };
       
+    if(this.state.produit_id!=0){
+      fetch('http://localhost:3000/magasins', requestOptions)
+      .then(response => response.json()
+     )
+     .then(data =>{console.log("enregitre avec succes vrai:",data)
+     this.setState({magazin:data})
+       this.setState({nouveau:false})
     
+    } )
+    }
     
-    fetch('http://localhost:3000/magasins', requestOptions)
-       .then(response => response.json()
-      )
-      .then(data =>{console.log("enregitre avec succes vrai:",data)
-      this.setState({magazin:data})
-        this.setState({nouveau:false})
-     
-     } )
+   
+
+
     }
   
 
@@ -121,12 +133,16 @@ import Header from "components/Headers/Header.js";
     this.setState({nouveau:true})
   }
 
+  handleRetour=()=>{
+    this.setState({ok: <Redirect to='/admin/magazin'/>});
+ }
+
 render() {
   const animatedComponents = makeAnimated();
   return (
     <>
       <Header />
-      {/* Page content */}
+      {/* Page content */}   {this.state.ok}
       <Container className="mt--9" fluid>
       <Row className="mt-0">
       <Col className="mb-5 mb-xl-0" md="12">
@@ -138,7 +154,7 @@ render() {
          <div style={{textAlign:"left"}} >
             <Button
                 color="primary" 
-                onClick={(e) => e.preventDefault()}
+                onClick={this.handleRetour}
                 size="sm"
                         >
                         Precedent
@@ -239,7 +255,7 @@ render() {
                             className="form-control-alternative"
                             
                             id="pv"
-                            placeholder="PV"
+                            placeholder="pa"
                             type="number"
                           />
                         </FormGroup>
@@ -289,7 +305,7 @@ render() {
         </Row>) </>):(
          <div className="mt-8">
            <h3>Produit ajouté dans le magasin</h3>
-          <div id="echecSauv" className="alert alert-warning  mt-2" role="alert">
+          <div id="echecSauv" className="alert alert-dark  mt-2" role="alert">
               <div>
                 <span>Nom: </span> {this.state.magazin.produit.nom}
               </div>

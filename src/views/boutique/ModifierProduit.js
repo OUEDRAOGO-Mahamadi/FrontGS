@@ -333,7 +333,7 @@ render() {
       </div>  </>):(
          <div className="mt-8">
            <h3>Produit modifié dans la boutique</h3>
-          <div id="echecSauv" className="alert alert-warning  mt-2" role="alert">
+          <div id="echecSauv" className="alert alert-dark  mt-2" role="alert">
               <div>
                 <span>Nom: </span> {this.state.produit.nom}
               </div>
@@ -361,7 +361,7 @@ render() {
                     onClick={this.handleRetour}
                     size="md"
                             >
-                            Retour
+                            OK
                 </Button>
             </div> 
 

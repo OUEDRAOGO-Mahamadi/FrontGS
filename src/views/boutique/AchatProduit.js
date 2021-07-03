@@ -229,7 +229,7 @@ render() {
   return (
     <>
       <Header />
-      {/* Page content */}
+      {/* Page content */}   {this.state.ok}
       <Container className="mt--9" fluid>
       <Row className="mt-0">
       <Col className="mb-5 mb-xl-0" md="12">
@@ -241,10 +241,10 @@ render() {
          <div style={{textAlign:"left"}} >
             <Button
                 color="primary" 
-                onClick={(e) => e.preventDefault()}
+                onClick={this.handleRetour}
                 size="sm"
                         >
-                        Precedent
+                        Rétour Produit
             </Button>
          </div>    
          </Col> 
@@ -273,16 +273,7 @@ render() {
                   <Col xs="8">
                     <h3 className="mb-0">Faire un achat</h3>
                   </Col>
-                  <Col className="text-right" xs="4">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Settings
-                    </Button>
-                  </Col>
+                 
                 </Row>
               </CardHeader>
               <CardBody>

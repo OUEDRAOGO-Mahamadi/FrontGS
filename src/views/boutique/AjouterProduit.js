@@ -39,6 +39,7 @@ import {
 import ReactSelect from 'react-select'
 import makeAnimated from 'react-select/animated';
 import Header from "components/Headers/Header.js";
+import  { Redirect } from 'react-router-dom'
 
  class AjouterProduit extends Component {
   constructor(props) {
@@ -96,12 +97,20 @@ import Header from "components/Headers/Header.js";
     );
     }
   handleSave=()=>{
-  
+    let pv=$("#pv").val()
+    let qte=$("#quantite").val()
+    if(pv==""){
+      pv=0
+    }
+
+    if(qte==""){
+      qte=0
+    }
     
       var data= {
         "nom": $("#intitule").val(),
-        "pv": $("#pv").val(),
-        "qte":$("#quantite").val(),
+        "pv": pv,
+        "qte":qte,
         "famille_id":this.state.famille,
         "codebarre": this.state.code,
        
@@ -146,12 +155,16 @@ import Header from "components/Headers/Header.js";
  // document.getElementById("valide").disabled = true;
   }
 
+  handleRetour=()=>{
+    this.setState({ok: <Redirect to='/admin/produit'/>});
+ }
+
 render() {
   const animatedComponents = makeAnimated();
   return (
     <>
       <Header />
-      {/* Page content */}
+      {/* Page content */}  {this.state.ok}
       <Container className="mt--9" fluid>
 
       <Row className="mt-0">
@@ -164,7 +177,7 @@ render() {
          <div style={{textAlign:"left"}} >
             <Button
                 color="primary" 
-                onClick={(e) => e.preventDefault()}
+                onClick={this.handleRetour}
                 size="sm"
                         >
                         Precedent
@@ -197,16 +210,7 @@ render() {
                   <Col xs="8">
                     <h3 className="mb-0">Ajouter Produit</h3>
                   </Col>
-                  <Col className="text-right" xs="4">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Settings
-                    </Button>
-                  </Col>
+                 
                 </Row>
               </CardHeader>
               <CardBody>
@@ -328,7 +332,7 @@ render() {
             <div style={{textAlign:"right"}} >
               <Button
                   color="secondary" 
-                  //onClick={this.handleRetour}
+                  onClick={this.handleRetour}
                   size="md"
                           >
                           Annuler
@@ -358,7 +362,7 @@ render() {
       </div>  </>):(
          <div className="mt-8">
            <h3>Produit ajouté dans la boutique</h3>
-          <div id="echecSauv" className="alert alert-warning  mt-2" role="alert">
+          <div id="echecSauv" className="alert alert-dark  mt-2" role="alert">
               <div>
                 <span>Nom: </span> {this.state.produit.nom}
               </div>

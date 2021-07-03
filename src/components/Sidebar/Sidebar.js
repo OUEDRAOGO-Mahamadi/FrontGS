@@ -1,8 +1,9 @@
 
 import React, { useState } from "react";
-import { NavLink as NavLinkRRD, Link } from "react-router-dom";
+import { NavLink as NavLinkRRD, Redirect,Link } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
+
 
 // reactstrap components
 import {
@@ -39,6 +40,7 @@ var ps;
 
 const Sidebar = (props) => {
   const [collapseOpen, setCollapseOpen] = useState();
+  const [deconnect, setDeconnect] = useState();
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName) => {
     return props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
@@ -50,6 +52,11 @@ const Sidebar = (props) => {
   // closes the collapse
   const closeCollapse = () => {
     setCollapseOpen(false);
+  };
+  const handleDeconnecter=()=>{
+    setDeconnect( <Redirect to='/auth/login'/>)
+    localStorage.removeItem('user')
+    console.log("okkkkkkkk==>",deconnect)
   };
   // creates the links that appear in the left menu / Sidebar
   const createLinks = (routes) => {
@@ -72,6 +79,7 @@ const Sidebar = (props) => {
 
   const { bgColor, routes, logo } = props;
   let navbarBrandProps;
+  const my_route=routes.filter(data=>data.name!="Login")
   if (logo && logo.innerLink) {
     navbarBrandProps = {
       to: logo.innerLink,
@@ -90,6 +98,8 @@ const Sidebar = (props) => {
       expand="md"
       id="sidenav-main"
     >
+      {deconnect}
+
       <Container fluid>
         {/* Toggler */}
         <button
@@ -150,7 +160,7 @@ const Sidebar = (props) => {
               </DropdownItem>
              
               <DropdownItem divider />
-              <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
+              <DropdownItem href="#pablo" onClick={handleDeconnecter}>
                 <i className="ni ni-user-run" />
                 <span>Déconnecter</span>
               </DropdownItem>
@@ -204,7 +214,7 @@ const Sidebar = (props) => {
             </InputGroup>
           </Form>
           {/* Navigation */}
-          <Nav navbar>{createLinks(routes)}</Nav>
+          <Nav navbar>{createLinks(my_route)}</Nav>
           {/* Divider */}
          
         </Collapse>

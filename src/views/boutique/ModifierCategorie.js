@@ -6,6 +6,7 @@ import classnames from "classnames";
 import Chart from "chart.js";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
+import  { Redirect } from 'react-router-dom'
 // reactstrap components
 import $ from "jquery";
 import {
@@ -38,9 +39,9 @@ import {
 } from "variables/charts.js";
 
 import Header from "components/Headers/Header.js";
-import  { Redirect } from 'react-router-dom'
 
-class AjouterCategorie extends Component {
+
+class ModifierCategorie extends Component {
   constructor(props) {
       super(props)
       this.state = {
@@ -52,22 +53,36 @@ class AjouterCategorie extends Component {
       
     }
 
+    componentDidMount() {
+      var id=localStorage.getItem("idCategorie")
+      fetch("http://localhost:3000/familles/"+id)
+      .then((response) => response.json())
+      .then((data) => {
+         console.log("okkk====>",data)
+         $("#intitule").val(data.nom)
 
+       }
+       
+      );
+    }
 
+    handleRetour=()=>{
+      this.setState({ok: <Redirect to='/admin/categorie'/>});
+   }
 
   handleSave=()=>{
-  
+    var id=localStorage.getItem("idCategorie")
     
     var data= {
       "nom": $("#intitule").val(),
     
     }
     const requestOptions = {
-      method: 'POST',
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json','Accept': 'application/json' },
       body: JSON.stringify(data)
   };
-  fetch('http://localhost:3000/familles', requestOptions)
+  fetch('http://localhost:3000/familles/'+id, requestOptions)
   .then(response => response.json()
  )
  .then(data =>{
@@ -78,20 +93,13 @@ class AjouterCategorie extends Component {
 
   }
   
-  handleAddNew=()=>{
-    this.setState({nouveau:true})
 
-  }
-
-  handleRetour=()=>{
-    this.setState({ok: <Redirect to='/admin/categorie'/>});
- }
 
 render() {
   return (
     <>
       <Header />
-      {/* Page content */}   {this.state.ok}
+      {/* Page content */}    {this.state.ok}
       <Container className="mt--9" fluid>
       <Row className="mt-0">
       <Col className="mb-5 mb-xl-0" md="12">
@@ -133,9 +141,9 @@ render() {
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
                   <Col xs="8">
-                    <h3 className="mb-0">Ajouter Categorie</h3>
+                    <h3 className="mb-0">Modifier Categorie</h3>
                   </Col>
-              
+                 
                 </Row>
               </CardHeader>
               <CardBody>
@@ -184,7 +192,7 @@ render() {
             <div style={{textAlign:"right"}} >
               <Button
                   color="secondary" 
-                  //onClick={this.handleRetour}
+                  onClick={this.handleRetour}
                   size="md"
                           >
                           Annuler
@@ -198,7 +206,7 @@ render() {
                 onClick={this.handleSave}
                 size="md"
                         >
-                        Ajouter
+                        Modifier
             </Button>
          </div> 
 
@@ -206,7 +214,7 @@ render() {
         </Row> </>):(
          <div className="mt-8">
            <h3>Catégorie ajouteé avec success</h3>
-          <div id="echecSauv" className="alert alert-warning  mt-2" role="alert">
+          <div id="echecSauv" className="alert alert-dark  mt-2" role="alert">
         
               <div>
                 <span>Categorie: </span>  {this.state.categorie}
@@ -224,10 +232,10 @@ render() {
               <div style={{textAlign:"right"}} >
                 <Button
                     color="primary" 
-                    onClick={this.handleAddNew}
+                    onClick={this.handleRetour}
                     size="md"
                             >
-                            OK
+                            Retour
                 </Button>
             </div> 
 
@@ -245,4 +253,4 @@ render() {
 };
 
 }
-export default AjouterCategorie;
+export default ModifierCategorie;

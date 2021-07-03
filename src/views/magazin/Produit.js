@@ -63,7 +63,7 @@ class ProduitMagazin extends Component {
     this.handleCharge.bind(this)
   }
 
-toggle=()=>{
+toggleStock=()=>{
  this.setState({isOpen:!this.state.isOpen})
 }
 toggleCat=()=>{
@@ -210,7 +210,7 @@ handleTrie=(e)=>{
                     <i className="fas fa-search" />
                   </InputGroupText>
                 </InputGroupAddon>
-                <Input placeholder="Search" onChange={this.handleTrie} type="text" />
+                <Input placeholder="Rechercher" onChange={this.handleTrie} type="text" />
         </InputGroup>
              
         </Col> 
@@ -262,7 +262,7 @@ handleTrie=(e)=>{
                   </ButtonDropdown>
                   </Col>
                   <Col md="1" className="text-right">
-                  <ButtonDropdown direction="left" size="sm" isOpen={this.state.isOpen} toggle={this.toggle}>
+                  <ButtonDropdown direction="left" size="sm" isOpen={this.state.isOpen} toggle={this.toggleStock}>
                     <DropdownToggle caret color="primary">
                       Stock
                     </DropdownToggle>

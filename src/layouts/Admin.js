@@ -7,22 +7,18 @@ import { Container } from "reactstrap";
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
-import AjouterProduit from "views/boutique/AjouterProduit.js";
-import ModifierProduit from "views/boutique/ModifierProduit.js";
-import ModifierStock from "views/magazin/ModifierStock.js";
-import DetailProduit from "views/boutique/DetailProduit.js";
-import DetailVente from "views/boutique/DetailVente.js";
-import DetailDepot from "views/magazin/DetailProduit.js";
-import AjouterCategorie from "views/boutique/AjouterCategorie.js";
-import AjouterStock from "views/magazin/AjouterStock.js";
-import AjouterUser from "views/users/AjouterUser.js";
-import Profile from "views/users/Profile.js";
+
 import routes from "routes.js";
+import routesGes from "routesGes.js";
+import routesAdd from "routesAdd.js";
+
 
 const Admin = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
-
+  let data={}
+  data=  JSON.parse(localStorage.getItem('user'))
+  console.log("ma data",data)
   React.useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
@@ -50,77 +46,7 @@ const Admin = (props) => {
       }
     });
   };
-  var routesAdd = [
-    {
-      path: "/ajouter-produit",
-      name: "Achat Produit",
-      component: AjouterProduit,
-      layout: "/admin",
-    },
-    {
-      path: "/ajouter-categorie",
-      name: "Produit",
 
-      component: AjouterCategorie,
-      layout: "/admin",
-    },
-    {
-      path: "/ajouter-stock",
-      name: "Produit",
-
-      component: AjouterStock,
-      layout: "/admin",
-    },
-     {
-      path: "/ajouter-user",
-      name: "Produit",
-
-      component: AjouterUser,
-      layout: "/admin",
-    },
-    {
-      path: "/profile",
-      name: "Produit",
-
-      component: Profile,
-      layout: "/admin",
-    },
-    {
-      path: "/detail-produit",
-      name: "Detail Produit",
-
-      component: DetailProduit,
-      layout: "/admin",
-    },
-    {
-      path: "/detail-depot",
-      name: "Detail Produit",
-
-      component: DetailDepot,
-      layout: "/admin",
-    },
-    {
-      path: "/detail-vente",
-      name: "Detail vente",
-
-      component: DetailVente,
-      layout: "/admin",
-    },
-    {
-      path: "/modifier-produit",
-      name: "Detail vente",
-
-      component: ModifierProduit,
-      layout: "/admin",
-    },
-    {
-      path: "/modifier-depot",
-      name: "Detail vente",
-
-      component: ModifierStock,
-      layout: "/admin",
-    }
-  ]
   const getRoutesAdd = (routes) => {
     return routes.map((prop, key) => {
       if (prop.layout === "/admin") {
@@ -137,6 +63,21 @@ const Admin = (props) => {
     });
   };
 
+  const my_route=()=>{
+  if(data!=null){
+    if(data.role=="ADMIN"){
+      return routes;
+    }else{
+      return routesGes;
+    }
+  }
+
+  return []
+   
+  
+  
+  }
+
   const getBrandText = (path) => {
     for (let i = 0; i < routes.length; i++) {
       if (
@@ -146,17 +87,17 @@ const Admin = (props) => {
         return routes[i].name;
       }
     }
-    return "Ajout Stock";
+    return "Ma Boutique";
   };
 
   return (
     <>
       <Sidebar
         {...props}
-        routes={routes}
+        routes={my_route()}
         logo={{
           innerLink: "/admin/index",
-          imgSrc: require("../assets/img/brand/argon-react.png").default,
+          imgSrc: require("../assets/img/brand/stock.png").default,
           imgAlt: "...",
         }}
       />
@@ -166,7 +107,7 @@ const Admin = (props) => {
           brandText={getBrandText(props.location.pathname)} 
         />
         <Switch>
-          {getRoutes(routes)}
+          {getRoutes(my_route())}
           {getRoutesAdd(routesAdd)}
           {/* <Route
             path={add}
@@ -178,7 +119,14 @@ const Admin = (props) => {
             component={AjouterCategorie}
             key="152"
           /> */}
-          <Redirect from="*" to="/admin/produit" />
+          {
+            (data!=null)?
+            (<Redirect from="*" to="/admin/produit" />):(
+             <Redirect from="*" to="/auth/login" />
+            )
+
+          }
+          
         </Switch>
         <Container fluid>
           <AdminFooter />

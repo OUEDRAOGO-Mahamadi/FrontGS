@@ -42,7 +42,7 @@ import makeAnimated from 'react-select/animated';
 import $ from "jquery";
 import  { Redirect } from 'react-router-dom'
 
-class AjouterUser extends Component {
+class ModifierUser extends Component {
   constructor(props) {
       super(props)
       this.state = {
@@ -51,6 +51,7 @@ class AjouterUser extends Component {
         role:[],
         nouveau:true,
         role_id:0,
+        init_role:""
       }
    
       this.handleChangeRole.bind(this)
@@ -58,7 +59,26 @@ class AjouterUser extends Component {
   
   componentDidMount() {
    
+    var id=localStorage.getItem("idUser")
 
+    fetch("http://localhost:3000/users/"+id)
+    .then((response) => response.json())
+    .then((data) => {
+       console.log("okkk====>",data.role.nom)
+       this.setState({user:data,init_role:data.role.nom})
+       this.setState({role_id:data.role.id})
+       $("#nom").val(data.firstname)
+       $("#prenom").val(data.lastname)
+       $("#email").val(data.email)
+       $("#username").val(data.username)
+       $("#password1").val(data.password_digest)
+       $("#password2").val(data.password_digest)
+       
+     }
+     
+    );
+
+    
     fetch("http://localhost:3000/roles")
     .then((response) => response.json())
     .then((data) => {
@@ -89,7 +109,8 @@ class AjouterUser extends Component {
 
   handleSave=()=>{
   
-    
+    var id=localStorage.getItem("idUser")
+
     var data= {
       "firstname": $("#nom").val(),
       "lastname": $("#prenom").val(),
@@ -102,14 +123,14 @@ class AjouterUser extends Component {
   
     }
     const requestOptions = {
-      method: 'POST',
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json','Accept': 'application/json' },
       body: JSON.stringify(data)
   };
     
   
   
-  fetch('http://localhost:3000/users', requestOptions)
+  fetch('http://localhost:3000/users/'+id, requestOptions)
      .then(response => response.json()
     )
     .then(data =>{console.log("enregitre avec succes vrai:",data)
@@ -120,13 +141,12 @@ class AjouterUser extends Component {
   }
 
   handleAddNew=()=>{
-    this.setState({nouveau:true})
+    this.setState({ok: <Redirect to='/admin/user'/>});
   }
 
   handleRetour=()=>{
     this.setState({ok: <Redirect to='/admin/user'/>});
  }
-
 
   render() {
     const animatedComponents = makeAnimated();
@@ -198,7 +218,7 @@ class AjouterUser extends Component {
                               <Input
                                 className="form-control-alternative"
                                 id="nom"
-                                placeholder="Nom"
+                                placeholder="email"
                                 type="text"
                               />
                             </FormGroup>
@@ -215,7 +235,7 @@ class AjouterUser extends Component {
                                 className="form-control-alternative"
                                 
                                 id="prenom"
-                                placeholder="Prenom"
+                                placeholder="Email"
                                 type="text"
                               />
                             </FormGroup>
@@ -233,7 +253,7 @@ class AjouterUser extends Component {
                               <Input
                                 className="form-control-alternative"
                                 id="username"
-                                placeholder="Usename"
+                                placeholder="email"
                                 type="text"
                               />
                             </FormGroup>
@@ -272,7 +292,7 @@ class AjouterUser extends Component {
                                 onChange={this.handleChangeRole}
                                 options={this.state.role}
 
-                                placeholder="Choisir le role"
+                                placeholder={this.state.init_role}
                              />
                             </FormGroup>
                           </Col>
@@ -299,7 +319,7 @@ class AjouterUser extends Component {
                                 className="form-control-label"
                                 htmlFor="input-last-name"
                               >
-                              password
+                              confirmer password
                               </label>
                               <Input
                                 className="form-control-alternative"
@@ -353,7 +373,7 @@ class AjouterUser extends Component {
               </Col>
             </Row> </>):(
          <div className="mt-8">
-           <h3>Utilisateur enregistre</h3>
+           <h3>Utilisateur Modifie</h3>
           <div id="echecSauv" className="alert alert-dark  mt-2" role="alert">
               <div >
                 <span>Nom: </span> {this.state.user.firstname}
@@ -402,4 +422,4 @@ class AjouterUser extends Component {
 }
 };
 
-export default AjouterUser;
+export default ModifierUser;

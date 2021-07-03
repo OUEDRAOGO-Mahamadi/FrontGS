@@ -31,7 +31,7 @@ import AchatProduit from "views/boutique/AchatProduit.js";
 import Vente from "views/boutique/Vente.js";
 import ApprovisionerStock from "views/magazin/ApprovisionnerStock.js";
 import ApprovisionerBoutique from "views/boutique/ApprovisionnerStock.js";
-var routes = [
+var routesGes = [
   {
     path: "/achat-produit",
     name: "Vente Produit",
@@ -53,27 +53,7 @@ var routes = [
     component: Produit,
     layout: "/admin",
   },
-  {
-    path: "/magazin",
-    name: "Dépot",
-    icon: "ni ni-shop text-blue",
-    component: ProduitMagazin,
-    layout: "/admin",
-  },
-  {
-    path: "/approvision-boutique",
-    name: "Ravitailler Boutique",
-    icon: "ni ni-shop text-blue",
-    component: ApprovisionerBoutique,
-    layout: "/admin",
-  },
-  {
-    path: "/approvision",
-    name: "Approvisionnement",
-    icon: "ni ni-shop text-blue",
-    component: ApprovisionerStock,
-    layout: "/admin",
-  },
+
   {
     path: "/categorie",
     name: "Categorie",
@@ -81,55 +61,15 @@ var routes = [
     component: Categorie,
     layout: "/admin",
   },
-  {
-    path: "/user",
-    name: "Utilisateur",
-    icon: "ni ni-circle-08 text-blue",
-    component: User,
-    layout: "/admin",
-  },
+
+
   // {
-  //   path: "/index",
-  //   name: "Dashboard",
-  //   icon: "ni ni-tv-2 text-primary",
-  //   component: Index,
-  //   layout: "/admin",
+  //   path: "/login",
+  //   name: "Login",
+  //   icon: "ni ni-key-25 text-info",
+  //   component: Login,
+  //   layout: "/auth",
   // },
-  // {
-  //   path: "/icons",
-  //   name: "Icons",
-  //   icon: "ni ni-planet text-blue",
-  //   component: Icons,
-  //   layout: "/admin",
-  // },
-  // {
-  //   path: "/maps",
-  //   name: "Maps",
-  //   icon: "ni ni-pin-3 text-orange",
-  //   component: Maps,
-  //   layout: "/admin",
-  // },
-  // {
-  //   path: "/user-profile",
-  //   name: "User Profile",
-  //   icon: "ni ni-single-02 text-yellow",
-  //   component: Profile,
-  //   layout: "/admin",
-  // },
-  // {
-  //   path: "/tables",
-  //   name: "Tables",
-  //   icon: "ni ni-bullet-list-67 text-red",
-  //   component: Tables,
-  //   layout: "/admin",
-  // },
-  {
-    path: "/login",
-    name: "Login",
-    icon: "ni ni-key-25 text-info",
-    component: Login,
-    layout: "/auth",
-  },
   // {
   //   path: "/register",
   //   name: "Register",
@@ -138,4 +78,4 @@ var routes = [
   //   layout: "/auth",
   // },
 ];
-export default routes;
+export default routesGes;

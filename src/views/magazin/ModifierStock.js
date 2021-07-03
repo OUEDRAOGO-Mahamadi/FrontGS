@@ -273,7 +273,7 @@ render() {
         </Row>) </>):(
          <div className="mt-8">
            <h3>Produit modifié dans le magasin</h3>
-          <div id="echecSauv" className="alert alert-warning  mt-2" role="alert">
+          <div id="echecSauv" className="alert alert-dark  mt-2" role="alert">
               <div>
                 <span>Nom: </span> {this.state.magazin.produit.nom}
               </div>

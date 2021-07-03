@@ -261,7 +261,7 @@ class Vente extends Component {
                       <td>{data.montantencaisse}</td>
                       <td>{data.monnaie}</td>
                       <td>
-                      <i onClick={this.handleDetail.bind(this,data.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>
+                      <i onClick={this.handleDetail.bind(this,data.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/>
                       </td>
                     </tr>):null
 

@@ -15,8 +15,8 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
-import { Link } from "react-router-dom";
+import React,{ useState }  from "react";
+import { Link,Redirect } from "react-router-dom";
 // reactstrap components
 import {
   DropdownMenu,
@@ -39,8 +39,28 @@ import "../../boot.css"
 
 
 const AdminNavbar = (props) => {
+  const [deconnect, setDeconnect] = useState();
+
+   let data=  JSON.parse(localStorage.getItem('user'))
+
+   if(data==null){
+     data={}
+     data.nom=""
+     data.prenom=""
+   }
+
+  const handleDeconnecter=()=>{
+    setDeconnect( <Redirect to='/auth/login'/>)
+    localStorage.removeItem('user')
+    console.log("okkkkkkkk==>",deconnect)
+  };
+
+
+
+
   return (
     <>
+    {deconnect}
       <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
         <Container fluid>
           <Link
@@ -76,23 +96,23 @@ const AdminNavbar = (props) => {
                   </span>
                   <Media className="ml-2 d-none d-lg-block">
                     <span className="mb-0 text-sm font-weight-bold">
-                      Alioune Dieng
-                    </span>
+                    {data.nom[0].toUpperCase()+""+data.prenom[0].toUpperCase()}
+                       </span>
                   </Media>
                 </Media>
               </DropdownToggle>
               <DropdownMenu className="dropdown-menu-arrow" right>
                 <DropdownItem className="noti-title" header tag="div">
-                  <h6 className="text-overflow m-0">Bienvenue!</h6>
+                  <h6 style={{textAlign:"center"}} className="text-overflow m-0">Bienvenue!</h6>
                 </DropdownItem>
-                <DropdownItem to="/admin/profile" tag={Link}>
+                 <DropdownItem tag="div">
                   <i className="ni ni-single-02" />
-                  <span>Mon profile</span>
-                </DropdownItem>
+                  <span>{data.nom+" "+data.prenom}</span>
+                </DropdownItem> 
                 
                 <DropdownItem divider />
-                <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
-                <i style={{color:"red"}} className="ni ni-button-power" />
+                <DropdownItem href="/auth/login" onClick={handleDeconnecter}>
+                  <i style={{color:"red"}} className="ni ni-button-power" />
                   <span style={{color:"red"}}>Déconnecter</span>
                 </DropdownItem>
               </DropdownMenu>
