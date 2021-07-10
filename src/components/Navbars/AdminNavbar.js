@@ -1,20 +1,4 @@
-/*!
 
-=========================================================
-* Argon Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React,{ useState }  from "react";
 import { Link,Redirect } from "react-router-dom";
 // reactstrap components
@@ -34,20 +18,20 @@ import {
   Container,
   Media,
 } from "reactstrap";
+
 import "../../boot.css"
-
-
 
 const AdminNavbar = (props) => {
   const [deconnect, setDeconnect] = useState();
-
+   let nom="";
+   let prenom="";
    let data=  JSON.parse(localStorage.getItem('user'))
+   
+  if(data){
+   nom=data.nom[0].toUpperCase()
+   prenom=data.prenom[0].toUpperCase()
+  }
 
-   if(data==null){
-     data={}
-     data.nom="User"
-     data.prenom="User"
-   }
 
   const handleDeconnecter=()=>{
     setDeconnect( <Redirect to='/auth/login'/>)
@@ -96,7 +80,7 @@ const AdminNavbar = (props) => {
                   </span>
                   <Media className="ml-2 d-none d-lg-block">
                     <span className="mb-0 text-sm font-weight-bold">
-                    {data.nom[0].toUpperCase()+""+data.prenom[0].toUpperCase()}
+                    {nom+""+prenom}
                        </span>
                   </Media>
                 </Media>
