@@ -310,20 +310,20 @@ class Produit extends Component {
                           this.state.produits.map((element,idx) =>(
                             (parseInt(element.qte)>5)?
                             (<tr>
-                            <td >05/06/2021</td>
+                            <td >{element.created_at.split("T")[0]}</td>
                             <td >{element.nom}</td>
                               <td>{element.famille.nom}</td>
-                              <td>{element.pv}</td>
+                              <td>{element.pv} FCFA</td>
                               <td><Badge style={{fontSize:"small",cursor:"pointer"}} pill color="success">{element.qte}</Badge></td>
                               <td>
                                 <i id="role1" onClick={this.handleModifier.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i onClick={this.handleDetail.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i id="role2" style={{fontSize:"medium",cursor:"pointer"}} onClick={this.supprimer.bind(this,element.id)} className="fas fa-trash-alt text-danger  mr-3"/>
                               </td>
                             </tr>):
                             (<tr>
-                            <td >05/06/2021</td>
+                            <td >{element.created_at.split("T")[0]}</td>
                             <td >{element.nom}</td>
                               <td>{element.famille.nom}</td>
-                              <td>{element.pv}</td>
+                              <td>{element.pv} FCFA</td>
                               <td><Badge style={{fontSize:"small",cursor:"pointer"}} pill color="warning">{element.qte}</Badge></td>
                               <td>
                                 <i id="role3" onClick={this.handleModifier.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3 role" ></i><i onClick={this.handleDetail.bind(this,element.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i id="role4" style={{fontSize:"medium",cursor:"pointer"}} onClick={this.supprimer.bind(this,element.id)} className="fas fa-trash-alt role text-danger mr-3"/>

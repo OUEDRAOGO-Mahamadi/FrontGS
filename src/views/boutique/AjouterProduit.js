@@ -69,6 +69,7 @@ import  { Redirect } from 'react-router-dom'
       $("#code").val(Math.floor(Math.random() * 1000000000000000))
       this.setState({color:"green"})
       document.getElementById("valide").disabled = false;
+      console.log("code:",data)
     }else{
       $("#code").val("00000000000000000000000000000")
       this.setState({color:"red"})
@@ -98,6 +99,7 @@ import  { Redirect } from 'react-router-dom'
     }
   handleSave=()=>{
     let pv=$("#pv").val()
+    let  user=  JSON.parse(localStorage.getItem('user'))
     let qte=$("#quantite").val()
     if(pv==""){
       pv=0
@@ -113,6 +115,7 @@ import  { Redirect } from 'react-router-dom'
         "qte":qte,
         "famille_id":this.state.famille,
         "codebarre": this.state.code,
+        "user_id":user.id
        
     
       }
@@ -131,7 +134,13 @@ import  { Redirect } from 'react-router-dom'
       console.log("data send",data)
         this.setState({produit:data})
         this.setState({nouveau:false})
-     } )
+     },
+     (error) => {
+       if(error){
+         console.log("erroe",error)
+       }
+     }
+      )
     }
   
 
@@ -227,7 +236,7 @@ render() {
                             className="form-control-label"
                             htmlFor="input-username"
                           >
-                            intitulé
+                            Nom
                           </label>
                           <Input
                             className="form-control-alternative"

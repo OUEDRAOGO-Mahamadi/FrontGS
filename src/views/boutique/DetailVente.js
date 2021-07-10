@@ -70,9 +70,9 @@ import Header from "components/Headers/Header.js";
     .then((data) => {
        console.log("okkk====>",data)
        $("#date").val(data.created_at.split("T")[0]+"  "+data.created_at.split("T")[1].split(":")[0]+":"+data.created_at.split("T")[1].split(":")[1])
-       $("#encaisse").val(data.montantencaisse)
-       $("#total").val(data.montant)
-       $("#monnaie").val(data.monnaie)
+       $("#encaisse").val(data.montantencaisse+" FCFA")
+       $("#total").val(data.montant+" FCFA")
+       $("#monnaie").val(data.monnaie+" FCFA")
     
      }
      
@@ -156,6 +156,25 @@ render() {
                             className="form-control-label"
                             htmlFor="input-email"
                           >
+                            Vendu Par
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            
+                            id="user"
+                            readOnly
+                            type="text"
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                    <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-email"
+                          >
                             Montant Total
                           </label>
                           <Input
@@ -167,6 +186,7 @@ render() {
                           />
                         </FormGroup>
                       </Col>
+
                     </Row>
                     <Row>
                       <Col lg="6">

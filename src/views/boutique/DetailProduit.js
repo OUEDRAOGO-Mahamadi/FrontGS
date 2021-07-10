@@ -203,7 +203,25 @@ render() {
                         </FormGroup>
                       </Col>
                     </Row>
-                  
+                  <Row>
+                  <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-last-name"
+                          >
+                            Enregistré Par
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            
+                            id="role"
+                            readOnly
+                            type="text"
+                          />
+                        </FormGroup>
+                      </Col>
+                  </Row>
                     <hr className="my-4" />
                   {/* Description */}
                 

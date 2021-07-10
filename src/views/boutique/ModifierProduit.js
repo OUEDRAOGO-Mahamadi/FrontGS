@@ -196,10 +196,10 @@ render() {
                     <Button
                       color="primary"
                       href="#pablo"
-                      onClick={(e) => e.preventDefault()}
+                      onClick={this.handleRetour}
                       size="sm"
                     >
-                      Settings
+                      Precedent
                     </Button>
                   </Col>
                 </Row>

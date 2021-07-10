@@ -97,6 +97,7 @@ class Vente extends Component {
     .then((data) => {
       var panier=data.filter(x => x.created_at.split("T")[0] === date)
       this.setState({ventes:panier})
+      console.log("ventes:",data)
       panier.map(e=>{
         total+=parseInt(e.montant)
         console.log("someme",total)
@@ -241,7 +242,7 @@ class Vente extends Component {
                   <tr>
                     <th scope="col">Date</th>
                     <th scope="col">Heure</th>
-                    <th scope="col">Client</th>
+                    <th scope="col">Vendu Par</th>
                     <th scope="col">Montant</th>
                     <th scope="col">Encaisse</th>
                     <th scope="col">Monnaie</th>
@@ -255,11 +256,11 @@ class Vente extends Component {
                       (<tr>
                       <td >{data.created_at.split("T")[0]}</td>
                       <td >{data.created_at.split("T")[1].split(":")[0]+":"+data.created_at.split("T")[1].split(":")[1]}</td>
-                      <td >Anonyme</td>
+                      <td >"nnn"</td>
                       
-                      <td>{data.montant}</td>
-                      <td>{data.montantencaisse}</td>
-                      <td>{data.monnaie}</td>
+                      <td>{data.montant} FCFA</td>
+                      <td>{data.montantencaisse} FCFA</td>
+                      <td>{data.monnaie} FCFA</td>
                       <td>
                       <i onClick={this.handleDetail.bind(this,data.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/>
                       </td>

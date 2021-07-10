@@ -51,7 +51,7 @@ class Login extends Component {
     if(user!=null){
         
       this.setState({ok: <Redirect to='/admin/produit'/>});
-      localStorage.setItem('user', JSON.stringify({nom:user.firstname,prenom:user.lastname,role:user.role.nom}));
+      localStorage.setItem('user', JSON.stringify({id:user.id,nom:user.firstname,prenom:user.lastname,role:user.role.nom}));
     
     }
     else{

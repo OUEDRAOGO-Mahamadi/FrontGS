@@ -16,8 +16,7 @@ import routesAdd from "routesAdd.js";
 const Admin = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
-  let data={}
-  data=  JSON.parse(localStorage.getItem('user'))
+  let  data=  JSON.parse(localStorage.getItem('user'))
   console.log("ma data",data)
   React.useEffect(() => {
     document.documentElement.scrollTop = 0;

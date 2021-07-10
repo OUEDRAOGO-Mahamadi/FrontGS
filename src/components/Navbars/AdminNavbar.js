@@ -45,8 +45,8 @@ const AdminNavbar = (props) => {
 
    if(data==null){
      data={}
-     data.nom=""
-     data.prenom=""
+     data.nom="User"
+     data.prenom="User"
    }
 
   const handleDeconnecter=()=>{

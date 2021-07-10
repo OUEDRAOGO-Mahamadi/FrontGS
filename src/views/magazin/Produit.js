@@ -292,7 +292,7 @@ handleTrie=(e)=>{
                   (
                       (parseInt(data.stock)>5)?
                       (<tr>
-                      <td >05/06/2021</td>
+                      <td >{data.created_at.split("T")[0]}</td>
                       <td >{data.produit.nom}</td>
                         <td>{data.produit.famille.nom}</td>
                         <td>{data.pa}</td>
@@ -302,10 +302,10 @@ handleTrie=(e)=>{
                         </td>
                       </tr>):
                       (<tr>
-                        <td >05/06/2021</td>
+                        <td >{data.created_at.split("T")[0]}</td>
                         <td >{data.produit.nom}</td>
                           <td>{data.produit.famille.nom}</td>
-                          <td>{data.pa}</td>
+                          <td>{data.pa} FCFA</td>
                           <td><Badge style={{fontSize:"small",cursor:"pointer"}} pill color="warning">{data.stock}</Badge></td>
                           <td>
                           <i onClick={this.handleModifier.bind(this,data.id)} style={{fontSize:"medium",cursor:"pointer"}} className="fas fa-edit text-success mr-3" /><i onClick={this.handleDetail.bind(this,data.id)} style={{fontSize:"medium",cursor:"pointer"}}   className="fas fa-info-circle text-primary mr-3"/><i  onClick={this.supprimer.bind(this,data.id)} style={{fontSize:"medium",cursor:"pointer"}}  className="fas fa-trash-alt text-danger mr-3"/>

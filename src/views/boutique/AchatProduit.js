@@ -60,6 +60,8 @@ class AchatProduit extends Component {
     }
   
   componentDidMount() {
+
+    
     $("#liste").css("display","none")
     $("#valideAchat").css("display","none")
     document.getElementById("valide").disabled = true;
@@ -120,6 +122,8 @@ class AchatProduit extends Component {
     var panier=this.state.produits.find(x => x.codebarre === data)
     $("#liste").css("display","block")
     document.getElementById("valide").disabled = false;
+
+    
    try{
     console.log("ok====================>")
     var id=this.state.panier.findIndex(x=>x.id==panier.id)
@@ -180,13 +184,20 @@ class AchatProduit extends Component {
       } )
   }
   handleAchat=()=>{
+    let  user=  JSON.parse(localStorage.getItem('user'))
+    let ecaisse =$("#encaisse").val()
+    if($("#encaisse").val()==""){
+      ecaisse=0
+    }
     var data= {
       // "nom": $("#intitule").val(),
       // "pv": $("#pv").val(),
+      
       "montant":this.state.total,
-      "montantencaisse":$("#encaisse").val(),
+      "montantencaisse":ecaisse,
       "monnaie":this.state.monnaie,
       "venteproduits_attributes": this.state.produit_ids,
+      "user_id":user.id
      
   
     }
@@ -401,7 +412,7 @@ render() {
             <div style={{textAlign:"right"}} >
               <Button
                   color="secondary" 
-                  //onClick={this.handleRetour}
+                  onClick={this.handleRetour}
                   size="md"
                           >
                           Annuler
@@ -426,7 +437,7 @@ render() {
       </>):(
          <div className="mt-8">
            <h3>Vente effectuée avec succèss</h3>
-          <div id="echecSauv" className="alert alert-warning  mt-2" role="alert">
+          <div id="echecSauv" className="alert alert-dark  mt-2" role="alert">
           {
           this.state.panier.map((element,idx) =>(
              <>
