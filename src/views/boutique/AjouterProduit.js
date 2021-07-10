@@ -56,7 +56,8 @@ import  { Redirect } from 'react-router-dom'
       resultCategorie:"",
       nouveau:true,
       detail:false,
-      color:"white"
+      color:"white",
+      error: ""
     }
     this.handleScan = this.handleScan.bind(this)
     this.handleChangeCategorie.bind(this);
@@ -84,7 +85,7 @@ import  { Redirect } from 'react-router-dom'
   componentDidMount() {
 
     document.getElementById("valide").disabled = true;
-
+    $("#echec").css("display","none")
     fetch("http://localhost:3000/familles")
     .then((response) => response.json())
     .then((data) => {
@@ -132,12 +133,23 @@ import  { Redirect } from 'react-router-dom'
       )
       .then(data =>{console.log("enregitre avec succes vrai:",data)
       console.log("data send",data)
-        this.setState({produit:data})
-        this.setState({nouveau:false})
+        try{
+          if(data.status==403){
+            $("#echec").css("display","block")
+            this.setState({error:data.error})
+          }
+          else{
+            this.setState({produit:data})
+            this.setState({nouveau:false})
+          }
+        }catch(error){
+    
+        }
+        
      },
      (error) => {
        if(error){
-         console.log("erroe",error)
+         console.log("error",error)
        }
      }
       )
@@ -335,7 +347,7 @@ render() {
         </Row>
         <Row className="mt-2">
           <Col md="8">
-
+          <div id="echec" className="alert alert-danger  mt-2" role="alert">{this.state.error}</div>
           </Col>
           <Col md="2">
             <div style={{textAlign:"right"}} >
@@ -362,6 +374,7 @@ render() {
 
           </Col>
         </Row>
+        
         <div>
         <BarcodeReader
           onError={this.handleError}

@@ -53,11 +53,28 @@ const Sidebar = (props) => {
   const closeCollapse = () => {
     setCollapseOpen(false);
   };
-  const handleDeconnecter=()=>{
-    setDeconnect( <Redirect to='/auth/login'/>)
-    localStorage.removeItem('user')
-    console.log("okkkkkkkk==>",deconnect)
-  };
+
+  let nom="";
+  let prenom="";
+  
+   let name="";
+   let firstname="";
+
+   let data=  JSON.parse(localStorage.getItem('user'))
+   
+  if(data){
+   name=data.nom
+   nom=data.nom[0].toUpperCase()
+   prenom=data.prenom[0].toUpperCase()
+   firstname=data.prenom
+  }
+
+
+ const handleDeconnecter=()=>{
+   setDeconnect( <Redirect to='/auth/login'/>)
+   localStorage.removeItem('user')
+   console.log("okkkkkkkk==>",deconnect)
+ };
   // creates the links that appear in the left menu / Sidebar
   const createLinks = (routes) => {
     return routes.map((prop, key) => {
@@ -121,21 +138,7 @@ const Sidebar = (props) => {
         ) : null}
         {/* User */}
         <Nav className="align-items-center d-md-none">
-          <UncontrolledDropdown nav>
-            <DropdownToggle nav className="nav-link-icon">
-              <i className="ni ni-bell-55" />
-            </DropdownToggle>
-            <DropdownMenu
-              aria-labelledby="navbar-default_dropdown_1"
-              className="dropdown-menu-arrow"
-              right
-            >
-              <DropdownItem>Action</DropdownItem>
-              <DropdownItem>Another action</DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem>Something else here</DropdownItem>
-            </DropdownMenu>
-          </UncontrolledDropdown>
+        
           <UncontrolledDropdown nav>
             <DropdownToggle nav>
               <Media className="align-items-center">
@@ -143,7 +146,7 @@ const Sidebar = (props) => {
                   <img
                     alt="..."
                     src={
-                      require("../../assets/img/theme/team-1-800x800.jpg")
+                      require("../../assets/img/theme/gs.jpeg")
                         .default
                     }
                   />
@@ -151,20 +154,20 @@ const Sidebar = (props) => {
               </Media>
             </DropdownToggle>
             <DropdownMenu className="dropdown-menu-arrow" right>
-              <DropdownItem className="noti-title" header tag="div">
-                <h6 className="text-overflow m-0">Welcome!</h6>
-              </DropdownItem>
-              <DropdownItem to="/admin/profile" tag={Link}>
-                <i className="ni ni-single-02" />
-                <span>Mon profile</span>
-              </DropdownItem>
-             
-              <DropdownItem divider />
-              <DropdownItem href="#pablo" onClick={handleDeconnecter}>
-                <i className="ni ni-user-run" />
-                <span>Déconnecter</span>
-              </DropdownItem>
-            </DropdownMenu>
+                <DropdownItem className="noti-title" header tag="div">
+                  <h6 style={{textAlign:"center"}} className="text-overflow m-0">Bienvenue!</h6>
+                </DropdownItem>
+                 <DropdownItem tag="div">
+                  <i className="ni ni-single-02" />
+                  <span>{name+" "+firstname}</span>
+                </DropdownItem> 
+                
+                <DropdownItem divider />
+                <DropdownItem href="/auth/login" onClick={handleDeconnecter}>
+                  <i style={{color:"red"}} className="ni ni-button-power" />
+                  <span style={{color:"red"}}>Déconnecter</span>
+                </DropdownItem>
+              </DropdownMenu>
           </UncontrolledDropdown>
         </Nav>
         {/* Collapse */}

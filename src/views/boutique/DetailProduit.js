@@ -73,6 +73,7 @@ import Header from "components/Headers/Header.js";
        $("#quantite").val(data.qte)
        $("#intitule").val(data.nom)
        $("#categorie").val(data.famille.nom)
+       $("#user").val(data.user.lastname+" "+data.user.firstname)
     
      }
      
@@ -215,7 +216,7 @@ render() {
                           <Input
                             className="form-control-alternative"
                             
-                            id="role"
+                            id="user"
                             readOnly
                             type="text"
                           />

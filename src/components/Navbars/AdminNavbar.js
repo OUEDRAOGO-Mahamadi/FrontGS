@@ -25,11 +25,16 @@ const AdminNavbar = (props) => {
   const [deconnect, setDeconnect] = useState();
    let nom="";
    let prenom="";
+   let name="";
+   let firstname="";
+
    let data=  JSON.parse(localStorage.getItem('user'))
    
   if(data){
+   name=data.nom
    nom=data.nom[0].toUpperCase()
    prenom=data.prenom[0].toUpperCase()
+   firstname=data.prenom
   }
 
 
@@ -73,7 +78,7 @@ const AdminNavbar = (props) => {
                     <img
                       alt="..."
                       src={
-                        require("../../assets/img/theme/team-1-800x800.jpg")
+                        require("../../assets/img/theme/gs.jpeg")
                           .default
                       }
                     />
@@ -91,7 +96,7 @@ const AdminNavbar = (props) => {
                 </DropdownItem>
                  <DropdownItem tag="div">
                   <i className="ni ni-single-02" />
-                  <span>{data.nom+" "+data.prenom}</span>
+                  <span>{name+" "+firstname}</span>
                 </DropdownItem> 
                 
                 <DropdownItem divider />

@@ -73,6 +73,7 @@ import Header from "components/Headers/Header.js";
        $("#encaisse").val(data.montantencaisse+" FCFA")
        $("#total").val(data.montant+" FCFA")
        $("#monnaie").val(data.monnaie+" FCFA")
+       $("#user").val(data.user.lastname+" "+data.user.firstname)
     
      }
      

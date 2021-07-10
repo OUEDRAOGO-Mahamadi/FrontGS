@@ -28,7 +28,6 @@ const Footer = () => {
 
             <NavItem>
               <NavLink
-                href="https://www.creative-tim.com/presentation?ref=adr-admin-footer"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -42,18 +41,12 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                +22177548213
+                +221771766428/+221775073620
               </NavLink>
             </NavItem>
 
             <NavItem>
-              <NavLink
-              
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                MIT License
-              </NavLink>
+            
             </NavItem>
           </Nav>
         </Col>

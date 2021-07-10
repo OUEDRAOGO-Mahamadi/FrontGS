@@ -256,7 +256,7 @@ class Vente extends Component {
                       (<tr>
                       <td >{data.created_at.split("T")[0]}</td>
                       <td >{data.created_at.split("T")[1].split(":")[0]+":"+data.created_at.split("T")[1].split(":")[1]}</td>
-                      <td >"nnn"</td>
+                      <td >{data.user.lastname}</td>
                       
                       <td>{data.montant} FCFA</td>
                       <td>{data.montantencaisse} FCFA</td>
