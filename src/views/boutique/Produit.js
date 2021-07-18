@@ -126,10 +126,10 @@ class Produit extends Component {
     .then((response) => response.json())
     .then((data) => {
       if(stock==="5-"){
-        var panier=data.filter(x => x.qte<=5)
+        var panier=data.filter(x => x.qte<=x.limite)
         this.setState({produits:panier})
       }else{
-        var panier=data.filter(x => x.qte>5)
+        var panier=data.filter(x => x.qte>x.limite)
         this.setState({produits:panier})
       }
         

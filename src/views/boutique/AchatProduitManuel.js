@@ -344,6 +344,7 @@ render() {
           <Col className="order-xl-1" md="12">
             <Card className="bg-secondary shadow">
               <CardHeader className="bg-white border-0">
+              <h3 className="mb-0">Faire Un Achat Par Recherche</h3>
                 <Row className="align-items-center">
                   <Col xs="12">
                   <Table className="align-items-center table-flush" responsive>

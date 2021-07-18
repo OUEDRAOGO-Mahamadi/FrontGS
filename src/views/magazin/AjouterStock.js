@@ -255,7 +255,7 @@ render() {
                           </label>
                           <Input
                                 className="form-control-alternative"
-                                
+                                defaultValue="0"
                                 id="limite"
                                 placeholder="Limite Rupture Stock"
                                 type="number"

@@ -376,7 +376,7 @@ render() {
                             className="form-control-alternative"
                             id="limite"
                             placeholder=" Limite Rupture stock"
-                           
+                            defaultValue="0"
                             type="number"
                            
                             

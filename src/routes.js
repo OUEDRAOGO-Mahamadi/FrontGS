@@ -35,7 +35,7 @@ import ApprovisionerBoutique from "views/boutique/ApprovisionnerStock.js";
 var routes = [
   {
     path: "/achat-produit",
-    name: "Vente Produit",
+    name: "Vente Par Scan",
     icon: "ni ni-cart text-blue",
     component: AchatProduit,
     layout: "/admin",
