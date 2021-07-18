@@ -69,6 +69,7 @@ import Header from "components/Headers/Header.js";
        console.log("okkk====>",data)
        $("#pv").val(data.pa)
        $("#quantite").val(data.stock)
+       $("#limite").val(data.limite)
        $("#produit").val(data.produit.nom)
     
      }
@@ -79,6 +80,7 @@ import Header from "components/Headers/Header.js";
     var id=localStorage.getItem("idDepot")
       var data= {
         "pa": $("#pv").val(),
+        "limite": $("#limite").val(),
         "stock":$("#quantite").val(),
     
       }
@@ -156,16 +158,7 @@ render() {
                   <Col xs="8">
                     <h3 className="mb-0">Modifier le stock</h3>
                   </Col>
-                  <Col className="text-right" xs="4">
-                    <Button
-                      color="primary"
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                      size="sm"
-                    >
-                      Settings
-                    </Button>
-                  </Col>
+                 
                 </Row>
               </CardHeader>
               <CardBody>
@@ -193,6 +186,23 @@ render() {
                           />
                         </FormGroup>
                       </Col>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-email"
+                          >
+                            Limite Rupture Stock
+                          </label>
+                          <Input
+                                className="form-control-alternative"
+                                
+                                id="limite"
+                                placeholder="Limite Rupture Stock"
+                                type="number"
+                                  />
+                            </FormGroup>
+                        </Col>
                     </Row>
                     <Row>
                       <Col lg="6">
@@ -282,6 +292,9 @@ render() {
               </div>
               <div>
                 <span>Quantité: </span>{this.state.magazin.stock}
+              </div>
+              <div>
+                <span>Limite Rupture Stock: </span>{this.state.magazin.limite}
               </div>
               <div>
                 <span>Prix: </span>{this.state.magazin.pa}

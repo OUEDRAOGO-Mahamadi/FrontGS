@@ -56,7 +56,8 @@ import Header from "components/Headers/Header.js";
       resultCategorie:"",
       nouveau:true,
       detail:false,
-      color:"white"
+      color:"white",
+      image:""
     }
   
   }
@@ -70,10 +71,11 @@ import Header from "components/Headers/Header.js";
     .then((data) => {
        console.log("okkk====>",data)
        $("#pa").val(data.pa+" FCFA")
+       this.setState({image:"http://localhost/file/fichiers/data/"+data.produit.image})
        $("#quantite").val(data.stock)
        $("#intitule").val(data.produit.nom)
        $("#categorie").val(data.produit.famille.nom)
-    
+       $("#limite").val(data.limite)
      }
      
     );
@@ -131,7 +133,12 @@ render() {
                     informations du produit
                   </h6>
                   <div className="pl-lg-4">
-                    
+                  <Row>
+                  <Col lg="4">
+                  <img style={{marginTop:"30px"}} className="card-img-top" src={this.state.image} alt="Image"/>
+
+                  </Col>
+                  <Col lg="8">
                     <Row>
                       <Col lg="6">
                         <FormGroup>
@@ -203,6 +210,29 @@ render() {
                         </FormGroup>
                       </Col>
                     </Row>
+
+                    <Row>
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-first-name"
+                          >
+                            Limite Rupture Stock
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            id="limite"
+                            readOnly
+                            type="number"
+                          />
+                        </FormGroup>
+                      </Col>
+                    
+                    </Row>
+
+                  </Col>
+                </Row>
                   
                     <hr className="my-4" />
                   {/* Description */}

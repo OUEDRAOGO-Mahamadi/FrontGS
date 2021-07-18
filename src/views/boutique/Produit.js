@@ -290,7 +290,7 @@ class Produit extends Component {
                     <DropdownItem onClick={this.handleTieStock.bind(this,"5-")}>Rupture</DropdownItem>
                     <DropdownItem onClick={this.handleTieStock.bind(this,"5+")}>Disponible</DropdownItem>
                     </DropdownMenu>
-                  </ButtonDropdown>
+                  </ButtonDropdown>  
                   </Col>
                 </Row>
               </CardHeader>
@@ -308,7 +308,7 @@ class Produit extends Component {
                 <tbody>
                  {
                           this.state.produits.map((element,idx) =>(
-                            (parseInt(element.qte)>5)?
+                            (parseInt(element.qte)>element.limite)?
                             (<tr>
                             <td >{element.created_at.split("T")[0]}</td>
                             <td >{element.nom}</td>

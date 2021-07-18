@@ -121,10 +121,10 @@ toggleCat=()=>{
     .then((response) => response.json())
     .then((data) => {
       if(stock==="5-"){
-        var panier=data.filter(x => x.stock<=5)
+        var panier=data.filter(x => x.stock<=x.limite)
         this.setState({stock:panier})
       }else{
-        var panier=data.filter(x => x.stock>5)
+        var panier=data.filter(x => x.stock>x.limite)
         this.setState({stock:panier})
       }
         
@@ -290,7 +290,7 @@ handleTrie=(e)=>{
                 this.state.stock.map((data)=>(
                   (data.length=!0)?
                   (
-                      (parseInt(data.stock)>5)?
+                      (parseInt(data.stock)>data.limite)?
                       (<tr>
                       <td >{data.created_at.split("T")[0]}</td>
                       <td >{data.produit.nom}</td>

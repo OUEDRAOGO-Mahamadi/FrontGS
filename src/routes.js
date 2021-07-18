@@ -28,6 +28,7 @@ import Categorie from "views/boutique/Categorie.js";
 import ProduitMagazin from "views/magazin/Produit.js";
 import AjouterProduit from "views/boutique/AjouterProduit.js";
 import AchatProduit from "views/boutique/AchatProduit.js";
+import AchatProduitManuel from "views/boutique/AchatProduitManuel.js";
 import Vente from "views/boutique/Vente.js";
 import ApprovisionerStock from "views/magazin/ApprovisionnerStock.js";
 import ApprovisionerBoutique from "views/boutique/ApprovisionnerStock.js";
@@ -37,6 +38,13 @@ var routes = [
     name: "Vente Produit",
     icon: "ni ni-cart text-blue",
     component: AchatProduit,
+    layout: "/admin",
+  },
+  {
+    path: "/achat-produit-manuel",
+    name: "Vente Manuelle",
+    icon: "ni ni-cart text-blue",
+    component: AchatProduitManuel,
     layout: "/admin",
   },
   {

@@ -56,7 +56,9 @@ import  { Redirect } from 'react-router-dom'
       resultCategorie:"",
       nouveau:true,
       detail:false,
-      color:"white"
+      color:"white",
+      image:"",
+      file:""
 
     }
    
@@ -64,6 +66,7 @@ import  { Redirect } from 'react-router-dom'
   }
 
   componentDidMount() {
+    $("imp").css("display","none")
     var id=localStorage.getItem("idProduit")
     fetch("http://localhost:3000/produits/"+id)
     .then((response) => response.json())
@@ -71,13 +74,31 @@ import  { Redirect } from 'react-router-dom'
        console.log("okkk====>",data)
        $("#intitule").val(data.nom)
        $("#pv").val(data.pv)
+       $("#limite").val(data.limite)
        $("#quantite").val(data.qte)
-       this.setState({code:data.codebarre})
+       this.setState({code:data.codebarre,file:data.image})
        this.setState({famille:{value:data.famille.id,label:data.famille.nom}})
+       this.setState({image:"http://localhost/file/fichiers/data/"+data.image})
 
      }
      
     );
+
+
+    $("input[data-preview]").change(() =>{
+      var my_files = document.getElementById("image").files[0]
+      var $input = $('<input type="file" id="image" data-preview=".preview"/>');
+      var fileReader = new FileReader();
+      fileReader.readAsDataURL(my_files);
+      fileReader.onload = (fileEvent)=> {
+        $($input.data('preview')).attr('src', fileEvent.target.result);
+         this.setState({file:my_files})
+  
+      };
+    });
+
+
+
 
     fetch("http://localhost:3000/familles")
     .then((response) => response.json())
@@ -100,7 +121,9 @@ import  { Redirect } from 'react-router-dom'
         "qte":$("#quantite").val(),
         "famille_id":this.state.famille.value,
         "codebarre": this.state.code,
-       
+        "limite": $("#limite").val(),
+        "image":this.state.file
+        
     
       }
       const requestOptions = {
@@ -108,9 +131,8 @@ import  { Redirect } from 'react-router-dom'
         headers: { 'Content-Type': 'application/json','Accept': 'application/json' },
         body: JSON.stringify(data)
     };
-      
-    
-    
+     
+  
     fetch('http://localhost:3000/produits/'+id, requestOptions)
        .then(response => response.json()
       )
@@ -120,6 +142,41 @@ import  { Redirect } from 'react-router-dom'
         this.setState({nouveau:false})
      } )
     }
+
+
+    handleSaveImage=()=>{
+      var imageList=document.getElementById("image").files
+      const formData = new FormData(); 
+       console.log("image select",imageList)
+       console.log("image state",this.state.file)
+      // Update the formData object 
+      formData.append( 
+        "avatar", 
+        this.state.file
+       
+      );
+      const requestOptions = {
+        method: 'POST',
+        // headers: {'Access-Control-Allow-Origin':'*' },
+        body: formData
+      };
+      if(imageList.length!=0){
+
+      fetch("http://localhost/file/fichiers/fileupload.php", requestOptions)
+      .then((response) => response.json()
+      
+      )
+      .then(response =>{console.log("ok,",response)
+      this.setState({file:response.name})
+      this.handleSave()
+  
+     })
+    }else{
+ 
+      this.handleSave()
+    } 
+   }
+    
   
 
   handleChangeCategorie = (e) => {
@@ -284,6 +341,33 @@ render() {
                         </FormGroup>
                       </Col>
                     </Row>
+                    <Row>
+                    <Col lg="6">
+                      <label
+                            className="form-control-label"
+                            htmlFor="input-last-name"
+                      >
+                              Limite Rupture stock
+                              </label>
+                      <Input
+                                className="form-control-alternative"
+                                id="limite"
+                                placeholder=" Limite Rupture stock"
+                              
+                                type="number"
+                              
+                                
+                              />
+                        </Col>
+                    </Row>
+                    <Row className="mt-2" >
+                    <Col lg="6">
+                    {/* <img id="imp" style={{width:"200px",height:"200px"}} class="preview" src="#"/> */}
+                    <img id="im" style={{width:"200px",height:"200px"}} class="preview" src={this.state.image}/>
+                    <input type="file" id="image" name="file" data-preview=".preview"/>
+                    
+                    </Col>
+                  </Row>
                   
                     <hr className="my-4" />
                   {/* Description */}
@@ -317,7 +401,7 @@ render() {
           <div style={{textAlign:"right"}} >
             <Button
                 color="primary" 
-                onClick={this.handleSave}
+                onClick={this.handleSaveImage}
                 id="valide"
                 size="md"
                         >
@@ -345,6 +429,9 @@ render() {
               </div>
               <div>
                 <span>Prix: </span>{this.state.produit.pv}
+              </div>
+              <div>
+                <span>Limite stock: </span>{this.state.produit.limite}
               </div>
            </div>
               <Row className="mt-2">

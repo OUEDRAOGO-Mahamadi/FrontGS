@@ -39,7 +39,7 @@ import {
 import  { Redirect } from 'react-router-dom'
 import Header from "components/Headers/Header.js";
 import BarcodeReader from 'react-barcode-reader'
-class AchatProduit extends Component {
+class AchatProduitManuel extends Component {
   constructor(props) {
       super(props)
       this.state = {
@@ -52,12 +52,14 @@ class AchatProduit extends Component {
         produit_ids:[],
         coleur:"black",
         nouveau:true,
+        produit_search:[]
       }
-      this.handleScan = this.handleScan.bind(this)
+     // this.handleChoisir.bind(this)
       this.handleDelete.bind(this)
       this.handleMonnaie.bind(this)
       this.handleUpdateProduct.bind(this)
       this.handleQuantite.bind(this)
+      this.handleSearch.bind(this)
     }
   
   componentDidMount() {
@@ -65,7 +67,7 @@ class AchatProduit extends Component {
     
     $("#liste").css("display","none")
     $("#valideAchat").css("display","none")
-    document.getElementById("valide").disabled = true;
+    document.getElementById("valide").disabled = false;
 
     fetch("http://localhost:3000/produits")
     .then((response) => response.json())
@@ -88,10 +90,12 @@ class AchatProduit extends Component {
         this.setState({total:totals})
         $("#total").val(totals+" FCFA")
         this.setState({produit_ids:[...this.state.produit_ids,{produit_id:val.id}]})
+        console.log("okkkkk")
       })
   }
 
   else{
+      console.log("noooooo")
       $("#monnaie").val("0.00 FCFA")
       $("#total").val("0.00 FCFA")
       $("#encaisse").val("")
@@ -145,12 +149,15 @@ class AchatProduit extends Component {
     }
   }
 
-  handleScan(data){
-    var panier=this.state.produits.find(x => x.codebarre === data)
+  handleChoisir(panier){
+    var data=[]
+    if(panier){
+
     $("#liste").css("display","block")
+    
     document.getElementById("valide").disabled = false;
 
-    
+   this.setState({produit_search:data})
    try{
     console.log("ok====================>")
     var id=this.state.panier.findIndex(x=>x.id==panier.id)
@@ -158,11 +165,12 @@ class AchatProduit extends Component {
     if(this.state.panier.findIndex(x=>x.id==panier.id)==-1){
      
       this.setState({
-        panier: [...this.state.panier,{"id":panier.id,"image":panier.image,"intitule":panier.nom,"pv":panier.pv,"total":panier.pv,"quantite":1,"stock":panier.qte}]
+        panier: [...this.state.panier,{"id":panier.id,"image":panier.image,"intitule":panier.nom,"pv":panier.pv,"total":0,"quantite":1,"stock":panier.qte}]
       })
 
-      $("#qte"+panier.id).val(1)
+      
      this.handleTotal()
+    
       
     }else{
       console.log("table",this.state.panier[id])
@@ -172,7 +180,7 @@ class AchatProduit extends Component {
       this.setState({
         panier:this.state.panier
       })  
-      $("#qte"+this.state.panier[id].id).val(this.state.panier[id].quantite)
+      $("#qtes"+this.state.panier[id].id).val(this.state.panier[id].quantite)
       this.handleTotal()
      
     }
@@ -180,11 +188,13 @@ class AchatProduit extends Component {
     console.log("error====================>")
   }
   }
+  }
 
   handleDelete=(id)=>{
+    var data=[]
     this.setState({produit_ids:[],panier:this.state.panier.filter(x=>x.id!=id)})
     this.handleTotal()
-
+    this.setState({produit_search:data})
     if(this.state.panier.filter(x=>x.id!=id).length==0){
       $("#monnaie").val("0.00 FCFA")
       $("#total").val("0.00 FCFA")
@@ -238,17 +248,19 @@ class AchatProduit extends Component {
       headers: { 'Content-Type': 'application/json','Accept': 'application/json' },
       body: JSON.stringify(data)
   };
+  if(this.state.panier.length!=0){
         fetch('http://localhost:3000/ventes/', requestOptions)
         .then(response => response.json()
       )
       .then(data =>{
         console.log("enregitre avec succes vrai:",data)
         this.state.panier.map((val)=>{
-          this.handleUpdateProduct(val.id,{"qte":parseInt(val.stock)-parseInt(val.quantite)})
+          this.handleUpdateProduct(val.id,{"qtes":parseInt(val.stock)-parseInt(val.quantite)})
         })
         this.setState({nouveau:false})
 
       } )
+    }
   }
 
  errorMontantApplique=()=>{
@@ -261,10 +273,22 @@ class AchatProduit extends Component {
  }
 
  handleAddNew=()=>{
+  var data=[]
+      window.location.reload();
       this.setState({nouveau:true,panier:[]})
       $("#liste").css("display","none")
       $("#valideAchat").css("display","none")
-      window.location.reload();
+      this.setState({produit_search:data})
+}
+
+handleSearch=(e)=>{
+  var tab=[]
+   var data= this.state.produits.filter((data) =>  JSON.stringify(data).toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1)
+    this.setState({produit_search:data})
+   
+    if(e.target.value==""){
+      this.setState({produit_search:tab})
+    }
 }
 
 
@@ -281,7 +305,7 @@ render() {
          <CardHeader className="border-0">
          <Row >
         
-         <Col md="4">
+         <Col md="3">
          <div style={{textAlign:"left"}} >
             <Button
                 color="primary" 
@@ -292,8 +316,15 @@ render() {
             </Button>
          </div>    
          </Col> 
-         <Col md="8">
-         
+         <Col md="9">
+         <InputGroup className="input-group-alternative">
+                <InputGroupAddon addonType="prepend">
+                  <InputGroupText>
+                    <i className="fas fa-search" />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Input onChange={this.handleSearch} placeholder="Rechercher" type="text" />
+        </InputGroup>
          </Col> 
          </Row>
          </CardHeader>
@@ -314,8 +345,47 @@ render() {
             <Card className="bg-secondary shadow">
               <CardHeader className="bg-white border-0">
                 <Row className="align-items-center">
-                  <Col xs="8">
-                    <h3 className="mb-0">Faire un achat</h3>
+                  <Col xs="12">
+                  <Table className="align-items-center table-flush" responsive>
+                {
+                (this.state.produit_search.length!=0)?
+                (<thead className="thead-light">
+                  <tr>
+                    
+                    <th scope="col">Nom</th>
+                    <th scope="col">Categorie</th>
+                    <th scope="col">Prix</th>
+                    <th scope="col">Quantité Restante</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>):null
+                 }
+                <tbody>
+                 {
+                          this.state.produit_search.map((element,idx) =>(
+                            (this.state.produit_search.length!=0)?
+                            (<tr>
+                            <td >{element.nom}</td>
+                              <td>{element.famille.nom}</td>
+                              <td>{element.pv} FCFA</td>
+                              <td>{element.qte}</td>
+                              <td>
+                              <Button
+                                color="primary" 
+                                onClick={() => this.handleChoisir(element)}
+                                
+                                size="sm"
+                              >
+                                Choisir
+                             </Button>
+                              </td>
+                            </tr>):null
+                           
+                          ))
+                 }
+                 
+                </tbody>
+              </Table>
                   </Col>
                  
                 </Row>
@@ -359,7 +429,7 @@ render() {
                       </label>
                       </Col>
                       <Col md="5" style={{marginLeft:"40px"}}>
-                          <Input min="1" max="10000" type="number" onChange={this.handleQuantite.bind(this,idx,element.id)}  size="sm" id={"qte"+element.id}/>
+                          <Input min="1" max="10000" type="number" defaultValue="0" onChange={this.handleQuantite.bind(this,idx,element.id)}  size="sm" id={"qtes"+element.id}/>
                       </Col>
                  </Row>
                  </Col>
@@ -549,16 +619,10 @@ render() {
       )
     }
       </Container>
-      <div>
-        <BarcodeReader
-          onError={this.handleError}
-          onScan={this.handleScan}
-          />
-       
-      </div>
+     
     </>
   );
 }
 };
 
-export default AchatProduit;
+export default AchatProduitManuel;

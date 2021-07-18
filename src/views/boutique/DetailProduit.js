@@ -71,6 +71,8 @@ import Header from "components/Headers/Header.js";
        console.log("okkk====>",data)
        $("#pv").val(data.pv+" FCFA")
        $("#quantite").val(data.qte)
+       this.setState({image:"http://localhost/file/fichiers/data/"+data.image})
+       $("#limite").val(data.limite)
        $("#intitule").val(data.nom)
        $("#categorie").val(data.famille.nom)
        $("#user").val(data.user.lastname+" "+data.user.firstname)
@@ -132,6 +134,12 @@ render() {
                     informations du produit
                   </h6>
                   <div className="pl-lg-4">
+                    <Row  >
+                     <Col  className="mt-2" md="4">
+                        <img style={{marginTop:"30px"}} className="card-img-top" src={this.state.image} alt="Image"/>
+                     </Col>
+
+                   <Col md="8">
                     
                     <Row>
                       <Col lg="6">
@@ -211,6 +219,23 @@ render() {
                             className="form-control-label"
                             htmlFor="input-last-name"
                           >
+                            Limite Stock
+                          </label>
+                          <Input
+                            className="form-control-alternative"
+                            
+                            id="limite"
+                            readOnly
+                            type="text"
+                          />
+                        </FormGroup>
+                      </Col>
+                  <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-last-name"
+                          >
                             Enregistré Par
                           </label>
                           <Input
@@ -225,8 +250,8 @@ render() {
                   </Row>
                     <hr className="my-4" />
                   {/* Description */}
-                
-              
+                  </Col>
+                  </Row>
                   </div>
                   
           

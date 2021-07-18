@@ -88,6 +88,7 @@ import  { Redirect } from 'react-router-dom'
       var data= {
         "pa": pa,
         "stock":stock,
+        "limite":$("#limite").val(),
         "produit_id":this.state.produit_id,
     
       }
@@ -225,8 +226,6 @@ render() {
                       />
                         </FormGroup>
                       </Col>
-                    </Row>
-                    <Row>
                       <Col lg="6">
                         <FormGroup>
                           <label
@@ -243,6 +242,27 @@ render() {
                           />
                         </FormGroup>
                       </Col>
+                    </Row>
+                    <Row>
+                    
+                      <Col lg="6">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="input-email"
+                          >
+                            Limite Rupture Stock
+                          </label>
+                          <Input
+                                className="form-control-alternative"
+                                
+                                id="limite"
+                                placeholder="Limite Rupture Stock"
+                                type="number"
+                                  />
+                            </FormGroup>
+                        </Col>
+
                       <Col lg="6">
                         <FormGroup>
                           <label
@@ -261,7 +281,7 @@ render() {
                         </FormGroup>
                       </Col>
                     </Row>
-                  
+                   
                     <hr className="my-4" />
                   {/* Description */}
                 
@@ -314,6 +334,9 @@ render() {
               </div>
               <div>
                 <span>Quantité: </span>{this.state.magazin.stock}
+              </div>
+              <div>
+                <span>Limite Rupture Stock: </span>{this.state.magazin.limite}
               </div>
               <div>
                 <span>Prix: </span>{this.state.magazin.pa}

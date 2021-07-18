@@ -56,33 +56,49 @@ import  { Redirect } from 'react-router-dom'
       resultCategorie:"",
       nouveau:true,
       detail:false,
-      color:"white",
-      error: ""
+      color:"green",
+      error: "",
+      file:""
     }
     this.handleScan = this.handleScan.bind(this)
     this.handleChangeCategorie.bind(this);
+    this.handleChangeCode.bind(this);
   }
   handleScan(data){
     this.setState({
       code: data
     })
-    if(data){
-      $("#code").val(Math.floor(Math.random() * 1000000000000000))
-      this.setState({color:"green"})
+    $("#code").val(data)
+    document.getElementById("valide").disabled = false;
+    
+  }
+  handleChangeCode=(event)=>{
+    if(event){
       document.getElementById("valide").disabled = false;
-      console.log("code:",data)
     }else{
-      $("#code").val("00000000000000000000000000000")
-      this.setState({color:"red"})
+      document.getElementById("valide").disabled = true;
     }
-    
-    
   }
   handleError(err){
     console.error(err)
     $("#code").val(err)
   }
   componentDidMount() {
+
+    $("input[data-preview]").change(() =>{
+      var my_files = document.getElementById("image").files[0]
+      var $input = $('<input type="file" id="image" data-preview=".preview"/>');
+      var fileReader = new FileReader();
+      fileReader.readAsDataURL(my_files);
+      fileReader.onload = (fileEvent)=> {
+        $($input.data('preview')).attr('src', fileEvent.target.result);
+         this.setState({file:my_files})
+  
+      };
+    });
+
+
+
 
     document.getElementById("valide").disabled = true;
     $("#echec").css("display","none")
@@ -113,10 +129,12 @@ import  { Redirect } from 'react-router-dom'
       var data= {
         "nom": $("#intitule").val(),
         "pv": pv,
+        "limite": $("#limite").val(),
         "qte":qte,
         "famille_id":this.state.famille,
-        "codebarre": this.state.code,
-        "user_id":user.id
+        "codebarre": $("#code").val(),
+        "user_id":user.id,
+        "image":this.state.file
        
     
       }
@@ -155,6 +173,33 @@ import  { Redirect } from 'react-router-dom'
       )
     }
   
+  handleSaveImage=()=>{
+    var imageList=document.getElementById("image").files
+    const formData = new FormData(); 
+     console.log("image select",imageList)
+     console.log("image state",this.state.file)
+    // Update the formData object 
+    formData.append( 
+      "avatar", 
+      this.state.file
+     
+    );
+    const requestOptions = {
+      method: 'POST',
+      // headers: {'Access-Control-Allow-Origin':'*' },
+      body: formData
+    };
+
+    fetch("http://localhost/file/fichiers/fileupload.php", requestOptions)
+    .then((response) => response.json()
+    
+    )
+    .then(response =>{console.log("ok,",response)
+    this.setState({file:response.name})
+    this.handleSave()
+
+   })
+  }  
 
   handleChangeCategorie = (e) => {
     var data=[]
@@ -173,7 +218,8 @@ import  { Redirect } from 'react-router-dom'
 
  handleAddNew=()=>{
   this.setState({nouveau:true})
- // document.getElementById("valide").disabled = true;
+  $("#echec").css("display","none")
+    window.location.reload();
   }
 
   handleRetour=()=>{
@@ -324,16 +370,41 @@ render() {
                         className="form-control-label"
                         htmlFor="input-last-name"
                    >
+                           Limite Rupture stock
+                          </label>
+                  <Input
+                            className="form-control-alternative"
+                            id="limite"
+                            placeholder=" Limite Rupture stock"
+                           
+                            type="number"
+                           
+                            
+                          />
+                    </Col>
+                    <Col lg="6">
+                    <label
+                        className="form-control-label"
+                        htmlFor="input-last-name"
+                   >
                            Code Produit
                           </label>
                   <Input
                             className="form-control-alternative"
                             id="code"
                             placeholder="code"
+                            onChange={this.handleChangeCode}
                             type="text"
                             style={{color:this.state.color}}
-                            readOnly
+                            
                           />
+                    </Col>
+                  </Row>
+                  <Row className="mt-2" >
+                    <Col lg="6">
+                    <img style={{width:"200px",height:"200px"}} class="preview" src="http://localhost:8080/api/img/madi.jpeg"/>
+                    <input type="file" id="image" name="file" data-preview=".preview"/>
+                    
                     </Col>
                   </Row>
                   </div>
@@ -364,7 +435,7 @@ render() {
           <div style={{textAlign:"right"}} >
             <Button
                 color="primary" 
-                onClick={this.handleSave}
+                onClick={this.handleSaveImage}
                 id="valide"
                 size="md"
                         >
@@ -396,6 +467,9 @@ render() {
               </div>
               <div>
                 <span>Prix: </span>{this.state.produit.pv}
+              </div>
+              <div>
+                <span>Limite stock: </span>{this.state.produit.limite}
               </div>
            </div>
               <Row className="mt-2">
