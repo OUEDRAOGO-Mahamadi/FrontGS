@@ -34,9 +34,16 @@ import ApprovisionerBoutique from "views/boutique/ApprovisionnerStock.js";
 var routesGes = [
   {
     path: "/achat-produit",
-    name: "Vente Produit",
+    name: "Vente Par Scan",
     icon: "ni ni-cart text-blue",
     component: AchatProduit,
+    layout: "/admin",
+  },
+  {
+    path: "/achat-produit-manuel",
+    name: "Vente Manuelle",
+    icon: "ni ni-cart text-blue",
+    component: AchatProduitManuel,
     layout: "/admin",
   },
   {
