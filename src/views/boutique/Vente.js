@@ -251,7 +251,7 @@ class Vente extends Component {
                 </thead>
                 <tbody>
                   {
-                    this.state.ventes.map((data)=>(
+                    this.state.ventes.reverse().map((data)=>(
                       (this.state.ventes.length!=0)?
                       (<tr>
                       <td >{data.created_at.split("T")[0]}</td>

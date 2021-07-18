@@ -31,21 +31,16 @@ import AchatProduit from "views/boutique/AchatProduit.js";
 import Vente from "views/boutique/Vente.js";
 import ApprovisionerStock from "views/magazin/ApprovisionnerStock.js";
 import ApprovisionerBoutique from "views/boutique/ApprovisionnerStock.js";
+import AchatProduitManuel from "views/boutique/AchatProduitManuel.js";
 var routesGes = [
   {
     path: "/achat-produit",
-    name: "Vente Par Scan",
+    name: "Vente Produit",
     icon: "ni ni-cart text-blue",
     component: AchatProduit,
     layout: "/admin",
   },
-  {
-    path: "/achat-produit-manuel",
-    name: "Vente Manuelle",
-    icon: "ni ni-cart text-blue",
-    component: AchatProduitManuel,
-    layout: "/admin",
-  },
+  
   {
     path: "/vente",
     name: "Mes Ventes",

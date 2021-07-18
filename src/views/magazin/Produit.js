@@ -287,7 +287,7 @@ handleTrie=(e)=>{
                 </thead>
                 <tbody>
               {
-                this.state.stock.map((data)=>(
+                this.state.stock.reverse().map((data)=>(
                   (data.length=!0)?
                   (
                       (parseInt(data.stock)>data.limite)?

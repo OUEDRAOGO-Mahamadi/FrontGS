@@ -52,12 +52,14 @@ class AchatProduit extends Component {
         produit_ids:[],
         coleur:"black",
         nouveau:true,
+        produit_search:[]
       }
       this.handleScan = this.handleScan.bind(this)
       this.handleDelete.bind(this)
       this.handleMonnaie.bind(this)
       this.handleUpdateProduct.bind(this)
       this.handleQuantite.bind(this)
+      this.handleSearch.bind(this)
     }
   
   componentDidMount() {
@@ -266,7 +268,67 @@ class AchatProduit extends Component {
       $("#valideAchat").css("display","none")
       window.location.reload();
 }
+handleSearch=(e)=>{
+  var tab=[]
+   var data= this.state.produits.filter((data) =>  JSON.stringify(data).toLowerCase().indexOf(e.target.value.toLowerCase()) !== -1)
+    this.setState({produit_search:data})
+   
+    if(e.target.value==""){
+      this.setState({produit_search:tab})
+    }
+}
 
+
+handleChoisir(panier){
+  var data=[]
+  if(panier){
+
+  $("#liste").css("display","block")
+  
+  document.getElementById("valide").disabled = false;
+
+ this.setState({produit_search:data})
+ try{
+  console.log("ok====================>")
+  var id=this.state.panier.findIndex(x=>x.id==panier.id)
+  var total=this.state.produits.find(x => x.id === panier.id)
+  if(this.state.panier.findIndex(x=>x.id==panier.id)==-1){
+   
+    setTimeout(()=>{
+        
+      this.setState({
+        panier: [...this.state.panier,{"id":panier.id,"image":panier.image,"intitule":panier.nom,"pv":panier.pv,"total":panier.pv,"quantite":1,"stock":panier.qte}]
+      })
+      
+      $("#qte"+panier.id).val(1)
+      this.handleTotal(); 
+    
+    
+    
+    }
+    
+    
+    
+    , 1);
+  
+    
+  }else{
+    console.log("table",this.state.panier[id])
+    this.state.panier[id].quantite=parseInt(this.state.panier[id].quantite)+1
+    this.state.panier[id].total =parseInt(this.state.panier[id].total)+parseInt(total.pv)
+    
+    this.setState({
+      panier:this.state.panier
+    })  
+    $("#qte"+this.state.panier[id].id).val(this.state.panier[id].quantite)
+    this.handleTotal()
+   
+  }
+ }catch(error){
+  console.log("error====================>")
+}
+}
+}
 
 render() {
 
@@ -281,7 +343,7 @@ render() {
          <CardHeader className="border-0">
          <Row >
         
-         <Col md="4">
+         <Col md="3">
          <div style={{textAlign:"left"}} >
             <Button
                 color="primary" 
@@ -292,8 +354,15 @@ render() {
             </Button>
          </div>    
          </Col> 
-         <Col md="8">
-         
+         <Col md="9">
+         <InputGroup className="input-group-alternative">
+                <InputGroupAddon addonType="prepend">
+                  <InputGroupText>
+                    <i className="fas fa-search" />
+                  </InputGroupText>
+                </InputGroupAddon>
+                <Input onChange={this.handleSearch} placeholder="Rechercher" type="text" />
+        </InputGroup>
          </Col> 
          </Row>
          </CardHeader>
@@ -313,9 +382,49 @@ render() {
           <Col className="order-xl-1" md="12">
             <Card className="bg-secondary shadow">
               <CardHeader className="bg-white border-0">
-                <Row className="align-items-center">
-                  <Col xs="8">
-                    <h3 className="mb-0">Faire Un Achat Par Scan</h3>
+              <h3 className="mb-0">Faire Une Vente</h3>
+              <Row className="align-items-center">
+                  <Col xs="12">
+                  <Table className="align-items-center table-flush" responsive>
+                {
+                (this.state.produit_search.length!=0)?
+                (<thead className="thead-light">
+                  <tr>
+                    
+                    <th scope="col">Nom</th>
+                    <th scope="col">Categorie</th>
+                    <th scope="col">Prix</th>
+                    <th scope="col">Quantité Restante</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>):null
+                 }
+                <tbody>
+                 {
+                          this.state.produit_search.map((element,idx) =>(
+                            (this.state.produit_search.length!=0)?
+                            (<tr>
+                            <td >{element.nom}</td>
+                              <td>{element.famille.nom}</td>
+                              <td>{element.pv} FCFA</td>
+                              <td>{element.qte}</td>
+                              <td>
+                              <Button
+                                color="primary" 
+                                onClick={() => this.handleChoisir(element)}
+                                
+                                size="sm"
+                              >
+                                Choisir
+                             </Button>
+                              </td>
+                            </tr>):null
+                           
+                          ))
+                 }
+                 
+                </tbody>
+              </Table>
                   </Col>
                  
                 </Row>
@@ -359,7 +468,7 @@ render() {
                       </label>
                       </Col>
                       <Col md="5" style={{marginLeft:"40px"}}>
-                          <Input min="1" max="10000" type="number" onChange={this.handleQuantite.bind(this,idx,element.id)}  size="sm" id={"qte"+element.id}/>
+                          <Input defaultValue={element.quantite} min="1" max="10000" type="number" onChange={this.handleQuantite.bind(this,idx,element.id)}  size="sm" id={"qte"+element.id}/>
                       </Col>
                  </Row>
                  </Col>

@@ -189,16 +189,22 @@ import  { Redirect } from 'react-router-dom'
       // headers: {'Access-Control-Allow-Origin':'*' },
       body: formData
     };
+    if(imageList.length!=0){
+      fetch("http://localhost/file/fichiers/fileupload.php", requestOptions)
+      .then((response) => response.json()
+      
+      )
+      .then(response =>{console.log("ok,",response)
+      this.setState({file:response.name})
+      this.handleSave()
+  
+     })
 
-    fetch("http://localhost/file/fichiers/fileupload.php", requestOptions)
-    .then((response) => response.json()
-    
-    )
-    .then(response =>{console.log("ok,",response)
-    this.setState({file:response.name})
-    this.handleSave()
+    }else{
+      this.handleSave()
+    }
 
-   })
+   
   }  
 
   handleChangeCategorie = (e) => {

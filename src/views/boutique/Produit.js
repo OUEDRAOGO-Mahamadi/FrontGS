@@ -307,7 +307,7 @@ class Produit extends Component {
                 </thead>
                 <tbody>
                  {
-                          this.state.produits.map((element,idx) =>(
+                          this.state.produits.reverse().map((element,idx) =>(
                             (parseInt(element.qte)>element.limite)?
                             (<tr>
                             <td >{element.created_at.split("T")[0]}</td>
