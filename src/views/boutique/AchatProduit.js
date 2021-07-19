@@ -52,7 +52,8 @@ class AchatProduit extends Component {
         produit_ids:[],
         coleur:"black",
         nouveau:true,
-        produit_search:[]
+        produit_search:[],
+        index:1000
       }
       this.handleScan = this.handleScan.bind(this)
       this.handleDelete.bind(this)
@@ -158,9 +159,9 @@ class AchatProduit extends Component {
     var id=this.state.panier.findIndex(x=>x.id==panier.id)
     var total=this.state.produits.find(x => x.id === panier.id)
     if(this.state.panier.findIndex(x=>x.id==panier.id)==-1){
-     
+      this.setState({index:parseInt(this.state.index)-1})
       this.setState({
-        panier: [...this.state.panier,{"id":panier.id,"image":panier.image,"intitule":panier.nom,"pv":panier.pv,"total":panier.pv,"quantite":1,"stock":panier.qte}]
+        panier: [...this.state.panier,{"index":this.state.index,"id":panier.id,"image":panier.image,"intitule":panier.nom,"pv":panier.pv,"total":panier.pv,"quantite":1,"stock":panier.qte}]
       })
 
       $("#qte"+panier.id).val(1)
@@ -293,11 +294,11 @@ handleChoisir(panier){
   var id=this.state.panier.findIndex(x=>x.id==panier.id)
   var total=this.state.produits.find(x => x.id === panier.id)
   if(this.state.panier.findIndex(x=>x.id==panier.id)==-1){
-   
+    this.setState({index:parseInt(this.state.index)-1})
     setTimeout(()=>{
         
       this.setState({
-        panier: [...this.state.panier,{"id":panier.id,"image":panier.image,"intitule":panier.nom,"pv":panier.pv,"total":panier.pv,"quantite":1,"stock":panier.qte}]
+        panier: [...this.state.panier,{"index":this.state.index, "id":panier.id,"image":panier.image,"intitule":panier.nom,"pv":panier.pv,"total":panier.pv,"quantite":1,"stock":panier.qte}]
       })
       
       $("#qte"+panier.id).val(1)
@@ -436,7 +437,8 @@ render() {
                   </h6>
                   <div id="liste" className="pl-lg-4">
                   {
-                  this.state.panier.reverse().map((element,idx) =>(
+                  [].concat(this.state.panier)
+                  .sort((a, b) => a.index > b.index ? 1 : -1).map((element,idx) =>(
                     
                 <div >  
                    <Row>
