@@ -8,6 +8,8 @@ import Chart from "chart.js";
 import { Line, Bar } from "react-chartjs-2";
 // reactstrap components
 import $ from "jquery";
+import fs from "fs";
+
 import {
   Button,
   Card,
@@ -56,7 +58,9 @@ import Header from "components/Headers/Header.js";
       resultCategorie:"",
       nouveau:true,
       detail:false,
-      color:"white"
+      color:"white",
+      image:"",
+      image_name:""
     }
   
   }
@@ -72,6 +76,7 @@ import Header from "components/Headers/Header.js";
        $("#pv").val(data.pv+" FCFA")
        $("#quantite").val(data.qte)
        this.setState({image:"http://localhost/file/fichiers/data/"+data.image})
+       this.setState({image_name:data.image})
        $("#limite").val(data.limite)
        $("#intitule").val(data.nom)
        $("#categorie").val(data.famille.nom)
@@ -87,6 +92,47 @@ import Header from "components/Headers/Header.js";
  handleRetour=()=>{
      this.setState({ok: <Redirect to='/admin/produit'/>});
   }
+
+handleRemove=()=>{
+
+  
+ let data={avatar:this.state.image_name}
+
+ $.ajax({
+  type: "POST",
+  url: 'http://localhost/file/fichiers/delete.php',
+  data: data,
+  success: function(data){
+  console.log("okk",data);
+  },
+  error: function(xhr, status, error){
+    console.log("hh======<",error);
+  }
+ });
+
+
+
+  // const requestOptions = {
+  //   method: 'POST',
+  //   mode: 'cors',
+  //   headers: {
+  //   'Content-Type': 'application/json',
+  //   },
+  //   body:JSON.stringify(data)
+  // };
+  // console.log("data file",requestOptions)
+
+  //   fetch("http://localhost/file/fichiers/delete.php", requestOptions)
+  //   .then((response) => response.json()
+    
+  //   )
+  //   .then(response =>{console.log("ok,",response)
+  
+
+  //  })
+
+  
+}  
 
 render() {
   const animatedComponents = makeAnimated();
@@ -140,7 +186,7 @@ render() {
                      </Col>
 
                    <Col md="8">
-                    
+                    <Button onClick={this.handleRemove}>Delete</Button>
                     <Row>
                       <Col lg="6">
                         <FormGroup>

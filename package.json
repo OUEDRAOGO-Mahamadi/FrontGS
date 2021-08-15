@@ -1,11 +1,11 @@
 {
-  "name": "argon-dashboard-react",
+  "name": "GSK",
   "version": "1.2.0",
-  "description": "React version of Argon Dashboard by Creative Tim",
+  "description": "Application de gestion de stock",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/creativetimofficial/argon-dashboard-react.git"
+    "url": ""
   },
   "keywords": [
     "react",
@@ -17,10 +17,10 @@
     "argon-dashboard",
     "argon-dashboard-react"
   ],
-  "author": "Creative Tim",
+  "author": "D&O",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/creativetimofficial/argon-dashboard-react/issues"
+    "url": ""
   },
   "homepage": "./",
   "scripts": {

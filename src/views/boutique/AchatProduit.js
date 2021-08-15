@@ -91,6 +91,7 @@ class AchatProduit extends Component {
         this.setState({total:totals})
         $("#total").val(totals+" FCFA")
         this.setState({produit_ids:[...this.state.produit_ids,{produit_id:val.id}]})
+        $("#qte"+val.id).val(val.quantite)
       })
   }
 
@@ -126,15 +127,14 @@ class AchatProduit extends Component {
     
     
     console.log("panier1:",id)
-    //this.setState({panier:this.state.panier.filter((e)=>e.id!=id)})
+    let panier=[].concat(this.state.panier)
+    .sort((a, b) => a.index > b.index ? 1 : -1)
     var totals=0;
     console.log("panier2:",e.target.value)
     if(e.target.value){
       var ancien=this.state.produits.find(x => x.id === index)
-
-
-      this.state.panier[id].quantite=e.target.value
-      this.state.panier[id].total =parseInt(e.target.value)*parseInt(ancien.pv)
+      panier[id].quantite=e.target.value
+      panier[id].total =parseInt(e.target.value)*parseInt(ancien.pv)
       this.setState({panier:this.state.panier})
       console.log("panier====>:",this.state.panier)
 
@@ -152,21 +152,30 @@ class AchatProduit extends Component {
     var panier=this.state.produits.find(x => x.codebarre === data)
     $("#liste").css("display","block")
     document.getElementById("valide").disabled = false;
-
-    
+  
    try{
     console.log("ok====================>")
     var id=this.state.panier.findIndex(x=>x.id==panier.id)
     var total=this.state.produits.find(x => x.id === panier.id)
     if(this.state.panier.findIndex(x=>x.id==panier.id)==-1){
       this.setState({index:parseInt(this.state.index)-1})
+      setTimeout(()=>{
       this.setState({
         panier: [...this.state.panier,{"index":this.state.index,"id":panier.id,"image":panier.image,"intitule":panier.nom,"pv":panier.pv,"total":panier.pv,"quantite":1,"stock":panier.qte}]
       })
 
       $("#qte"+panier.id).val(1)
+      // this.state.panier.map((val,idx)=>{
+      //   $("#qte"+val.id).val(10)
+      // })
      this.handleTotal()
-      
+    },10)
+
+    // setTimeout(()=>{
+    //   this.state.panier.map((val,idx)=>{
+    //     $("#qte"+val.id).val(10)
+    //   })
+    // },1)
     }else{
       console.log("table",this.state.panier[id])
       this.state.panier[id].quantite=parseInt(this.state.panier[id].quantite)+1
@@ -185,8 +194,14 @@ class AchatProduit extends Component {
   }
 
   handleDelete=(id)=>{
-    this.setState({produit_ids:[],panier:this.state.panier.filter(x=>x.id!=id)})
-    this.handleTotal()
+    setTimeout(()=>{
+      this.setState({produit_ids:[],panier:this.state.panier.filter(x=>x.id!=id)})
+      this.handleTotal()
+      this.state.panier.map((val,idx)=>{
+        $("#qte"+val.id).val(val.quantite)
+      })
+    },1)
+   
 
     if(this.state.panier.filter(x=>x.id!=id).length==0){
       $("#monnaie").val("0.00 FCFA")
@@ -471,7 +486,7 @@ render() {
                       </Col>
                       <Col md="5" style={{marginLeft:"40px"}}>
                           <Input defaultValue={element.quantite} min="1" max="10000" type="number" onChange={this.handleQuantite.bind(this,idx,element.id)}  size="sm" id={"qte"+element.id}/>
-                      </Col>
+                    </Col>
                  </Row>
                  </Col>
                 </Row>
